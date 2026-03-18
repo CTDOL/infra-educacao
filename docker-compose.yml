@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  db:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=senha_forte_erp_ctdol_2024 # Mude depois se quiser
+    volumes:
+      - db-data:/var/lib/mysql
+  redis-cache:
+    image: redis:6.2-alpine
+  redis-queue:
+    image: redis:6.2-alpine
+  backend:
+    image: frappe/erpnext:v14.15.0
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - REDIS_CACHE=redis-cache:6379
+      - REDIS_QUEUE=redis-queue:6379
+    volumes:
+      - sites-data:/home/frappe/frappe-bench/sites
+  frontend:
+    image: frappe/erpnext:v14.15.0
+    command: nginx-entrypoint.sh
+    environment:
+      - BACKEND=backend:8000
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - sites-data:/home/frappe/frappe-bench/sites
+
+volumes:
+  db-data:
+  sites-data:
