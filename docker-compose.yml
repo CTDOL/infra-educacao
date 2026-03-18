@@ -3,7 +3,7 @@ services:
   db:
     image: mariadb:10.6
     environment:
-      - MYSQL_ROOT_PASSWORD=senha_forte_erp_ctdol_2024 # Mude depois se quiser
+      - MYSQL_ROOT_PASSWORD=senha_forte_erp_ctdol_2024
     volumes:
       - db-data:/var/lib/mysql
   redis-cache:
