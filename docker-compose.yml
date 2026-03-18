@@ -1,4 +1,5 @@
-version: "3.7"
+version: '3.7'
+
 services:
   db:
     image: mariadb:10.6
@@ -6,10 +7,14 @@ services:
       - MYSQL_ROOT_PASSWORD=senha_forte_erp_ctdol_2024
     volumes:
       - db-data:/var/lib/mysql
+      - ./mariadb-config.cnf:/etc/mysql/conf.d/frappe.cnf
+
   redis-cache:
     image: redis:6.2-alpine
+
   redis-queue:
     image: redis:6.2-alpine
+
   backend:
     image: frappe/erpnext:v14.15.0
     environment:
@@ -17,18 +22,24 @@ services:
       - DB_PORT=3306
       - REDIS_CACHE=redis-cache:6379
       - REDIS_QUEUE=redis-queue:6379
+      - GUNICORN_TIMEOUT=600
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
+
   frontend:
-    image: frappe/erpnext:v14.15.0
-    command: nginx-entrypoint.sh
-    environment:
-      - BACKEND=backend:8000
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:8080:8080"
+      - "0.0.0.0:8084:80"
+    depends_on:
+      - backend
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
 
 volumes:
   db-data:
   sites-data:
+  apps-data:
