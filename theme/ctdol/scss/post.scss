@@ -7,7 +7,11 @@ body { background-color: $ctdol-fundo; }
 .navbar.fixed-top {
   background-color: $ctdol-azul !important;
   border-bottom: 3px solid $ctdol-dourado;
-  .navbar-nav .nav-link, .navbar-brand { color: #ffffff; }
+  // Tudo no cabecalho legivel sobre o azul (menu de idioma, usuario/login, icones).
+  .nav-link, .navbar-brand, .btn-link, .dropdown-toggle, .login a, .usermenu a, .langmenu a,
+  .langmenu .btn, .icon, .navbar-text { color: #ffffff !important; }
+  // ...mas os menus suspensos (fundo claro) mantem o texto escuro.
+  .dropdown-menu .dropdown-item, .dropdown-menu a, .dropdown-menu .icon { color: $body-color !important; }
 }
 
 .btn-primary {
