@@ -33,6 +33,7 @@ define('CLI_SCRIPT', true);
 require($moodledir . '/config.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->libdir . '/resourcelib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
