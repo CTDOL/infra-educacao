@@ -5,16 +5,23 @@
 # ==============================================================================
 set -euo pipefail
 
-REPO_DIR="/home/ctdolc07/infra-educacao"
+REPO_DIR="${REPO_DIR:-/home/ctdolc07/infra-educacao}"
 cd "$REPO_DIR"
 
-echo "==> [$(date +'%Y-%m-%d %H:%M:%S')] Iniciando deploy do Moodle CTDOL..."
+# --- Etapa 1: sincroniza o repositorio e REEXECUTA este script ----------------
+# O "git merge" pode reescrever este proprio arquivo enquanto o bash o le, e o
+# processo em curso continuaria com a versao antiga (passos novos nao rodariam).
+# O "exec" recarrega o arquivo ja atualizado. Mantenha esta etapa curta e estavel.
+if [ "${CTDOL_DEPLOY_ETAPA:-1}" = "1" ]; then
+  echo "==> [$(date +'%Y-%m-%d %H:%M:%S')] Iniciando deploy do Moodle CTDOL..."
+  echo "==> Sincronizando com a branch main..."
+  git fetch origin main
+  git merge --ff-only origin/main
+  chmod +x "$REPO_DIR"/scripts/*.sh
+  CTDOL_DEPLOY_ETAPA=2 exec bash "$REPO_DIR/scripts/deploy_ci.sh"
+fi
 
-echo "==> Sincronizando com a branch main..."
-git fetch origin main
-git merge --ff-only origin/main
-
-chmod +x "$REPO_DIR"/scripts/*.sh
+# --- Etapa 2: passos de deploy (ja com a versao atualizada do script) ---------
 
 echo "==> Executando backup preventivo..."
 bash "$REPO_DIR/scripts/backup_moodle.sh"
