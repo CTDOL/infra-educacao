@@ -48,6 +48,7 @@ Quando acionado para **criar**, **atualizar** ou **publicar** um curso no Moodle
 courses/
 └── <shortname>/
     ├── course.json                 # Manifesto declarativo do curso (Schema v1)
+    ├── cover.jpg                   # Imagem do card de capa (16:9, paleta CTDOL)
     ├── lessons/                    # Aulas estruturadas em Markdown (.md)
     │   ├── 01-nome-da-aula.md
     │   ├── 02-nome-da-aula.md
@@ -65,6 +66,7 @@ courses/
   "fullname": "Engenharia de Contêineres com Docker (Do Desenvolvimento à Produção)",
   "category": "CTDOL Dev / Formação Técnica",
   "summary": "Resumo curricular claro do curso para exibição no card da página inicial.",
+  "image": "cover.jpg",
   "format": "topics",
   "visible": 1,
   "sections": [
