@@ -145,6 +145,44 @@ function garantir_secao(stdClass $course, int $numero, string $nome): void {
     }
 }
 
+
+function anexar_imagem_curso(stdClass $course, string $arquivo_imagem, bool $apply): void {
+    if (!file_exists($arquivo_imagem)) {
+        logmsg('WARN', "imagem referenciada nao existe: $arquivo_imagem");
+        return;
+    }
+    logmsg($apply ? 'IMAGEM' : 'DRY', "imagem de capa: " . basename($arquivo_imagem));
+    if (!$apply) {
+        return;
+    }
+    $context = context_course::instance($course->id);
+    $fs = get_file_storage();
+    
+    $arquivos_atuais = $fs->get_area_files($context->id, 'course', 'overviewfiles', 0, 'itemid, filepath, filename', false);
+    $novohash = sha1_file($arquivo_imagem);
+    foreach ($arquivos_atuais as $arq) {
+        if ($arq->get_contenthash() === $novohash) {
+            logmsg('OK', "imagem de capa inalterada");
+            return;
+        }
+    }
+    
+    $fs->delete_area_files($context->id, 'course', 'overviewfiles');
+    
+    $filerecord = [
+        'contextid' => $context->id,
+        'component' => 'course',
+        'filearea' => 'overviewfiles',
+        'itemid' => 0,
+        'filepath' => '/',
+        'filename' => basename($arquivo_imagem),
+        'timecreated' => time(),
+        'timemodified' => time(),
+    ];
+    $fs->create_file_from_pathname($filerecord, $arquivo_imagem);
+    logmsg('OK', "imagem de capa anexada ao curso ({$filerecord['filename']})");
+}
+
 function publicar_pagina(stdClass $course, int $secao, string $titulo, string $html): void {
     global $DB;
     if ($p = $DB->get_record('page', ['course' => $course->id, 'name' => $titulo], '*', IGNORE_MULTIPLE)) {
@@ -256,6 +294,9 @@ foreach ($manifestos as $m) {
         $course = garantir_curso($m, $catid, $apply);
         if (!$course) {
             continue; // dry-run de curso novo: nao ha o que detalhar.
+        }
+        if (!empty($m->image)) {
+            anexar_imagem_curso($course, $m->_dir . '/' . $m->image, $apply);
         }
         foreach ($m->sections as $i => $sec) {
             $numero = $i + 1;

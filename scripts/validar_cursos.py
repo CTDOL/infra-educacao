@@ -55,6 +55,13 @@ def main():
             if valor in vistos[chave]:
                 erro(f"{manifesto}: {chave} duplicado: {valor}")
             vistos[chave].add(valor)
+        if "image" in dados:
+            img_rel = dados["image"]
+            img_alvo = (pasta / img_rel).resolve()
+            if pasta.resolve() not in img_alvo.parents or not img_alvo.is_file():
+                erro(f"{manifesto}: arquivo de imagem inexistente ou fora do curso: {img_rel}")
+            elif not img_rel.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".svg")):
+                erro(f"{manifesto}: extensao de imagem invalida: {img_rel}")
         for sec in dados.get("sections", []):
             itens = [l["file"] for l in sec.get("lessons", [])] + [q["file"] for q in sec.get("quizzes", [])]
             for rel in itens:

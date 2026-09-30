@@ -3,7 +3,7 @@
   "shortname": "containers-docker",
   "idnumber": "CTDOL-DEV-001",
   "fullname": "Engenharia de Contêineres com Docker (Do Desenvolvimento à Produção)",
-  "category": "_HOMOLOGACAO_SANDBOX",
+  "category": "CTDOL Dev / Formação Técnica",
   "summary": "Curso de formação avançada em Docker Engine, Namespaces, Cgroups, BuildKit, Compose e segurança em produção. Oriundo da SSoT do Cofre CTDOL.",
   "format": "topics",
   "visible": 1,
@@ -58,5 +58,6 @@
         }
       ]
     }
-  ]
+  ],
+  "image": "cover.jpg"
 }
