@@ -1,5 +1,6 @@
 # Arquivos de configuração reais com senhas
-config.php
+# (ancorado na raiz: o config.php de temas, ex. theme/ctdol/config.php, DEVE ser versionado)
+/config.php
 *.env
 *.env.*
 

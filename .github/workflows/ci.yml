@@ -35,7 +35,7 @@ jobs:
 
       - name: Proibir segredos e arquivos sensiveis (Anti-Leak)
         run: |
-          ! git ls-files | grep -E '(^|/)(config\.php|\.env|.*\.sql(\.gz)?)$'
+          ! git ls-files | grep -vE '^theme/[^/]+/config\.php$' | grep -E '(^|/)(config\.php|\.env|.*\.sql(\.gz)?)$'
           ! git grep -nEi '(password|senha|secret)[^=]{0,20}=\s*["'\''][^<"'\'']{6,}' -- ':!docs' ':!*.md' ':!config/config.dist.php'
 
       - name: Permissao de execucao dos scripts
