@@ -1,69 +1,83 @@
-Qual recurso do kernel Linux limita o uso de CPU e memória de um container?
-A. namespaces
-B. cgroups
-C. iptables
-D. systemd
+Qual e o papel fundamental exercido pelos Namespaces e pelos Cgroups na arquitetura do Docker Engine?
+A. Namespaces compilam o codigo-fonte em binarios imutaveis, enquanto Cgroups gerenciam o trafego HTTP de entrada.
+B. Namespaces isolam a visibilidade de recursos do sistema operacional (processos, redes, pontos de montagem), enquanto Cgroups impoem limites fisicos ao consumo de hardware (CPU, memoria, I/O).
+C. Namespaces atuam como hipervisores de hardware bare-metal, enquanto Cgroups sao drivers de banco de dados relacionais.
+D. Namespaces sincronizam arquivos entre hosts remotos, enquanto Cgroups criam instancias duplicadas do kernel Linux.
 ANSWER: B
 
-Qual é a principal diferença entre um container e uma máquina virtual?
-A. O container compartilha o kernel do host, sem sistema operacional completo próprio
-B. O container exige um hypervisor
-C. O container sempre usa mais memória
-D. O container não pode rodar Linux
-ANSWER: A
+Em um Dockerfile, qual e a diferenca fundamental entre as instrucoes CMD e ENTRYPOINT?
+A. O CMD so pode ser executado em conteineres Alpine, enquanto o ENTRYPOINT e exclusivo para Debian e Ubuntu.
+B. O CMD define um executavel fixo e imutavel, enquanto o ENTRYPOINT define apenas variaveis de ambiente transitorias.
+C. O CMD define o comando ou parametros padrao que podem ser substituidos na CLI, enquanto o ENTRYPOINT define o executavel fixo do conteiner, convertendo argumentos da CLI em parametros adicionais a esse executavel.
+D. Nao ha diferenca pratica; ambas as instrucoes sao sinonimos processados de forma identica pelo Docker Daemon.
+ANSWER: C
 
-O que é uma imagem Docker?
-A. Um container em execução
-B. Um modelo somente leitura, formado por camadas, a partir do qual containers são criados
-C. Um volume de dados
-D. Um arquivo de rede
+Por que e considerada uma boa pratica de engenharia encadear comandos apt-get install e rm -rf /var/lib/apt/lists/* em uma unica instrucao RUN no Dockerfile?
+A. Porque o compilador de Dockerfiles rejeita arquivos com mais de tres instrucoes RUN.
+B. Porque cada instrucao RUN gera uma camada imutavel independente no Union FS; remover o cache em uma instrucao separada posterior nao reduz o tamanho da camada anterior ja persistida.
+C. Porque a remocao de pacotes acelera a velocidade da interface de rede docker0.
+D. Porque o comando apt-get exige permissao de root que e automaticamente revogada na linha seguinte.
 ANSWER: B
 
-Qual comando lista os containers em execução?
-A. docker images
-B. docker logs
-C. docker ps
-D. docker pull
-ANSWER: C
-
-O que acontece com os dados gravados na camada do container quando ele é removido?
-A. Ficam guardados no host
-B. São enviados ao registry
-C. São perdidos
-D. Migram automaticamente para um volume
-ANSWER: C
-
-Qual instrução do Dockerfile executa um comando durante a construção da imagem?
-A. CMD
-B. RUN
-C. EXPOSE
-D. FROM
+Qual e a razao tecnica para a recomendacao mandatoria de armazenar dados de bancos de dados em Volumes em vez de confiar no sistema de arquivos padrao do conteiner?
+A. Os conteineres nao possuem permissao de gravacao de arquivos em disco por padrao.
+B. O sistema de arquivos Union FS utiliza Copy-on-Write (CoW), o que penaliza a velocidade de I/O de gravacoes pesadas, alem do fato de que dados nao atrelados a volumes sao destruidos irreversivelmente quando o conteiner e removido (docker rm).
+C. Os volumes criptografam os dados automaticamente com chaves quanticas de 4096 bits.
+D. Apenas conteineres rodando em modo --net=host conseguem ler arquivos locais.
 ANSWER: B
 
-Por que copiar o arquivo de dependências antes do restante do código em um Dockerfile?
-A. Para aproveitar o cache de camadas e evitar reinstalar dependências a cada mudança no código
-B. Porque o Docker exige essa ordem
-C. Para reduzir o tamanho do código-fonte
-D. Para dispensar o comando RUN
-ANSWER: A
+De acordo com os padroes de seguranca do ecossistema CTDOL, qual e a configuracao correta para expor um servico web conteinerizado que sera atendido pelo Apache via Proxy Reverso?
+A. ports: ["0.0.0.0:8080:80"]
+B. ports: ["127.0.0.1:8085:80"]
+C. network_mode: "host" com porta aberta no firewall publico.
+D. ports: [":80"]
+ANSWER: B
 
-Qual é a forma recomendada de tratar senhas e chaves em uma imagem Docker?
-A. Gravá-las no Dockerfile
-B. Copiá-las com COPY para dentro da imagem
-C. Não incluí-las na imagem e fornecê-las em tempo de execução por um mecanismo seguro
-D. Publicá-las no registry
+Qual e a consequencia de executar conteineres em producao sem declarar limites explicitos de memoria RAM (--memory ou deploy.resources.limits.memory)?
+A. O conteiner entra em modo de suspensao automatica apos 15 minutos de inatividade.
+B. O Docker divide automaticamente a memoria restante em partes iguais entre todos os usuarios ativos do cPanel.
+C. Um conteiner desgovernado com vazamento de memoria pode consumir toda a RAM do host, levando o Linux OOM-Killer a finalizar processos arbitrarios de outros servicos vitais (como o Keycloak SSO), gerando indisponibilidade catastrofica.
+D. O kernel do Linux reduz a velocidade do clock do processador para impedir o aquecimento da maquina.
 ANSWER: C
 
-Como fazer dois containers se comunicarem pelo nome?
-A. Colocá-los na mesma rede definida pelo usuário
-B. Usar sempre o IP do host
-C. Publicar todas as portas com -p
-D. Executá-los como root
-ANSWER: A
+O que caracteriza o BuildKit, motor de build padrao do Docker atual, em contraste com o builder legado?
+A. O BuildKit executa as instrucoes do Dockerfile estritamente de cima para baixo, uma por vez, garantindo determinismo sequencial.
+B. O BuildKit traduz o Dockerfile para uma representacao intermediaria em grafo (LLB) resolvida por um solver concorrente, capaz de paralelizar estagios independentes e pular estagios que nao alimentam a saida final.
+C. O BuildKit e um servico em nuvem obrigatorio que compila as imagens nos servidores da Docker Inc. antes de devolve-las ao host local.
+D. O BuildKit substitui a linguagem Dockerfile por YAML, tornando a sintaxe FROM/RUN obsoleta e incompativel.
+ANSWER: B
 
-O que faz a opção -p 127.0.0.1:8080:80 em docker run?
-A. Publica a porta 80 do container apenas na interface local do host, porta 8080
-B. Publica a porta 8080 do container em todas as interfaces
-C. Bloqueia a porta 80
-D. Cria um volume
-ANSWER: A
+Em um Dockerfile multi-stage, qual e a funcao da instrucao COPY --from=build /bin/app /bin/app no estagio final?
+A. Copiar o arquivo do sistema de arquivos do host para dentro do conteiner, ignorando o contexto de build.
+B. Criar um link simbolico dinamico entre os dois estagios, de modo que ambos compartilhem o mesmo inode em tempo de execucao.
+C. Transferir seletivamente apenas o artefato produzido no estagio nomeado build, de modo que o toolchain de compilacao daquele estagio nao seja incorporado a imagem final.
+D. Mesclar integralmente todas as camadas do estagio build com as do estagio final, somando os dois sistemas de arquivos.
+ANSWER: C
+
+Um Dockerfile executa, nesta ordem: FROM node:22, WORKDIR /app, COPY . . e RUN npm ci. Por que essa ordenacao e considerada um antipadrao em esteiras de CI/CD?
+A. Porque a instrucao WORKDIR deve obrigatoriamente vir antes de FROM para que o cache seja ativado.
+B. Porque COPY . . altera-se a cada commit e invalida sua propria camada, o que pela regra de cascata forca a re-execucao de npm ci em todo build, mesmo quando as dependencias nao mudaram.
+C. Porque npm ci nao pode ser executado apos uma instrucao COPY, exigindo o uso obrigatorio de RUN npm install.
+D. Porque o Docker executa as instrucoes em ordem alfabetica, e COPY precede RUN no alfabeto, gerando inversao de dependencias.
+ANSWER: B
+
+Qual e a abordagem oficialmente recomendada pelo Docker para operar uma mesma stack em multiplos ambientes (desenvolvimento, homologacao e producao)?
+A. Manter um arquivo Compose independente e completo por ambiente, replicando integralmente servicos, redes e volumes em cada um.
+B. Utilizar uma base comum acrescida de overrides finos, combinando arquivos com -f base.yml -f prod.yml e ativando servicos contextuais por profiles.
+C. Editar manualmente o docker-compose.yml antes de cada deploy, comentando os servicos que nao devem subir naquele ambiente.
+D. Criar um conteiner privilegiado que reescreva o arquivo Compose em tempo de execucao conforme a variavel NODE_ENV.
+ANSWER: B
+
+Um conteiner esta isolado por namespaces e limitado por cgroups. Por que isso, isoladamente, nao e suficiente para considera-lo endurecido?
+A. Porque namespaces e cgroups sao desativados automaticamente quando o conteiner roda em modo detached (-d).
+B. Porque isolamento e privilegio sao eixos ortogonais: namespaces determinam o que o processo ve e cgroups quanto ele consome, mas nenhum dos dois restringe o que ele pode fazer no kernel, o que cabe as capabilities, ao seccomp e aos modulos de acesso mandatorio.
+C. Porque namespaces so funcionam em kernels Linux anteriores a versao 4.0, sendo inertes em hosts modernos.
+D. Porque cgroups protegem exclusivamente contra ataques de rede, deixando CPU e memoria inteiramente desprotegidas.
+ANSWER: B
+
+Qual e a distincao tecnica fundamental entre o rootless mode e o modo userns-remap do Docker?
+A. Nao ha distincao real: userns-remap e apenas o nome antigo do rootless mode, mantido por retrocompatibilidade.
+B. O rootless mode funciona exclusivamente em conteineres Windows, ao passo que userns-remap e restrito a hosts Linux.
+C. Em userns-remap o daemon continua executando com privilegios de root e apenas os conteineres sao remapeados; em rootless mode tanto o daemon quanto os conteineres executam sem privilegios de root.
+D. O rootless mode elimina completamente a necessidade de user namespaces, operando via criptografia de syscalls.
+ANSWER: C

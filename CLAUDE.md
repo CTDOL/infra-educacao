@@ -34,3 +34,21 @@ Se o Keycloak estiver indisponível e o administrador precisar acessar via senha
 ```bash
 /usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/cfg.php --name=auth --set=oauth2
 ```
+
+---
+
+## 🎓 Protocolo de Publicação de Cursos Docs-as-Code
+Quando acionado para criar, atualizar ou publicar cursos no Moodle:
+1. **Estrutura Obrigatória (`courses/<shortname>/`):**
+   - `course.json`: Manifesto com `shortname` (kebab-case), `idnumber` (ex: `CTDOL-DEV-XXX`), `category`, `fullname`, `summary`, `visible: 1`, e array `sections`.
+   - `lessons/`: Aulas em Markdown (.md) estruturadas, sem frontmatter YAML e com texto limpo.
+   - `quiz/`: Arquivo de avaliação no Formato Aiken (.txt) com questões objetivas (A, B, C, D e linha ANSWER: X).
+2. **Validação Obrigatória:**
+   - Execute sempre `python3 scripts/validar_cursos.py` antes de commitar ou abrir PR. O CI bloqueará qualquer erro de sintaxe.
+3. **Provisionamento Idempotente na VPS:**
+   - A publicação no Moodle é executada pelo script `scripts/provisionar_cursos.php`:
+     * Simulação prévia: `/usr/local/bin/ea-php83 scripts/provisionar_cursos.php` (Dry-run padrão).
+     * Aplicação em produção: `/usr/local/bin/ea-php83 scripts/provisionar_cursos.php --apply --course=<shortname>`.
+   - O script cria categorias e cursos que faltam, adiciona módulos de página, cria quizzes e importa o banco Aiken nativamente.
+4. **Regra de Ouro da Integridade Pedagógica:**
+   - NUNCA use backups binários `.mbz`. Cursos existentes recebem apenas atualizações aditivas de aulas; quizzes com tentativas de alunos jamais são alterados ou destruídos.

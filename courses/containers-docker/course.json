@@ -2,34 +2,59 @@
   "schema": 1,
   "shortname": "containers-docker",
   "idnumber": "CTDOL-DEV-001",
-  "fullname": "Containers com Docker: do zero à primeira imagem",
+  "fullname": "Engenharia de Contêineres com Docker (Do Desenvolvimento à Produção)",
   "category": "_HOMOLOGACAO_SANDBOX",
-  "summary": "Curso introdutório sobre containers e Docker: conceitos, imagens, Dockerfile, volumes e redes.",
+  "summary": "Curso de formação avançada em Docker Engine, Namespaces, Cgroups, BuildKit, Compose e segurança em produção. Oriundo da SSoT do Cofre CTDOL.",
   "format": "topics",
   "visible": 1,
   "sections": [
     {
-      "name": "Módulo 1 — Fundamentos",
+      "name": "Módulo 1 — Fundamentos e Dockerfile (N0/N1)",
       "lessons": [
-        { "title": "O que são containers", "file": "lessons/01-o-que-sao-containers.md" },
-        { "title": "Imagens e containers", "file": "lessons/02-imagens-e-containers.md" }
+        {
+          "title": "Aula 01: Fundamentos, Namespaces e Cgroups (N0)",
+          "file": "lessons/01-fundamentos-namespaces-cgroups.md"
+        },
+        {
+          "title": "Aula 02: Dockerfile e Camadas Imutáveis (N1)",
+          "file": "lessons/02-ciclo-de-vida-dockerfile.md"
+        }
       ]
     },
     {
-      "name": "Módulo 2 — Prática",
+      "name": "Módulo 2 — Persistência, Redes e Produção (N2/N3)",
       "lessons": [
-        { "title": "Escrevendo um Dockerfile", "file": "lessons/03-dockerfile.md" },
-        { "title": "Volumes e redes", "file": "lessons/04-volumes-e-redes.md" }
+        {
+          "title": "Aula 03: Volumes, Persistência e Redes (N2)",
+          "file": "lessons/03-volumes-e-redes.md"
+        },
+        {
+          "title": "Aula 04: Produção Anti-OOM, Compose e Swarm (N3)",
+          "file": "lessons/04-producao-anti-oom-compose.md"
+        }
       ]
     },
     {
-      "name": "Avaliação final",
+      "name": "Módulo 3 — Segurança e Laboratório Prático (N4)",
+      "lessons": [
+        {
+          "title": "Aula 05: Hardening e Rootless Mode (N4)",
+          "file": "lessons/05-seguranca-hardening-rootless.md"
+        },
+        {
+          "title": "Laboratório Prático: Exercícios de Fixação",
+          "file": "lessons/06-laboratorio-pratico.md"
+        }
+      ]
+    },
+    {
+      "name": "Avaliação de Certificação",
       "quizzes": [
         {
           "name": "Avaliação: Containers com Docker",
           "file": "quiz/containers_docker_moodle_aiken.txt",
           "grade": 10,
-          "attempts": 2
+          "attempts": 3
         }
       ]
     }
