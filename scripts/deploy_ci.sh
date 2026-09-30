@@ -50,6 +50,9 @@ echo "==> Aplicando upgrade do Moodle e limpando caches..."
 echo "==> Publicando atalhos curtos de cursos..."
 bash "$REPO_DIR/scripts/publicar_atalhos.sh" || echo "AVISO: atalhos com pendencias (nao bloqueia o deploy)."
 
+echo "==> Aplicando configuracoes de site (tema e login) quando houver nova versao..."
+bash "$REPO_DIR/scripts/aplicar_config_site.sh" || echo "AVISO: config de site nao aplicada/revertida (nao bloqueia o deploy)."
+
 echo "==> Validando status do sistema..."
 bash "$REPO_DIR/scripts/status_moodle.sh"
 
