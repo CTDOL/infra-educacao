@@ -1,0 +1,26 @@
+// Estilos CTDOL (depois do Bootstrap). Somente ajustes de aparencia.
+// NAO ocultar nem alterar .login-identityproviders / o botao de login SSO.
+
+body { background-color: $ctdol-fundo; }
+#page, .drawer { --ctdol-acento: #{$ctdol-dourado}; }
+
+.navbar.fixed-top {
+  background-color: $ctdol-azul !important;
+  border-bottom: 3px solid $ctdol-dourado;
+  .navbar-nav .nav-link, .navbar-brand { color: #ffffff; }
+}
+
+.btn-primary {
+  background-color: $ctdol-azul;
+  border-color: $ctdol-azul;
+  &:hover, &:focus { background-color: darken($ctdol-azul, 6%); border-color: $ctdol-dourado; }
+}
+
+// Acento dourado: sempre com texto azul escuro (AA).
+.badge-warning, .btn-accent {
+  background-color: $ctdol-dourado;
+  color: $ctdol-azul;
+}
+
+#page-header .card, .card { border-color: rgba($ctdol-azul, .15); }
+:focus-visible { outline: 3px solid $ctdol-dourado; outline-offset: 2px; }

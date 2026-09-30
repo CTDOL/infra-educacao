@@ -1,0 +1,15 @@
+// Tokens visuais CTDOL / DTIC (antes do Bootstrap).
+// Contrastes (WCAG 2.1 AA): branco s/ azul 15,4:1; azul s/ dourado 5,9:1.
+// ATENCAO: branco sobre dourado = 2,6:1 (reprova AA). Usar dourado so como acento,
+// com texto azul escuro por cima.
+$ctdol-azul:      #0B2545;
+$ctdol-dourado:   #C59B27;
+$ctdol-fundo:     #F4F4F1;
+$ctdol-texto-2:   #555347;
+
+$primary:   $ctdol-azul;
+$secondary: $ctdol-texto-2;
+$body-bg:   #ffffff;
+$link-color: $ctdol-azul;
+$navbar-dark-color: #ffffff;
+$font-family-sans-serif: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
