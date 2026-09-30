@@ -7,6 +7,7 @@
   "summary": "Curso de formação avançada em Docker Engine, Namespaces, Cgroups, BuildKit, Compose e segurança em produção. Oriundo da SSoT do Cofre CTDOL.",
   "format": "topics",
   "visible": 1,
+  "shortlink": true,
   "sections": [
     {
       "name": "Módulo 1 — Fundamentos e Dockerfile (N0/N1)",

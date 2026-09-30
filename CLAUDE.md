@@ -95,6 +95,7 @@ courses/
 ```
 > [!IMPORTANT]
 > - `visible`: Deve ser `1` para aparecer na página inicial do Moodle.
+> - `shortlink` (opcional): `true` publica o atalho `https://edu.ctdol.com.br/<shortname>` (redirect para `/course/info.php?name=<shortname>`, com prévia Open Graph). O `deploy_ci.sh` cria/remove o atalho via `scripts/publicar_atalhos.sh`; o `shortname` não pode ser nome reservado do Moodle.
 > - `category`: Se a categoria iniciar com `_` (ex: `_HOMOLOGACAO_SANDBOX`), o Moodle cria com `visible = 0` (oculta). Para cursos públicos, use categorias limpas sem prefixo `_`.
 > - `enrolment.type`: A IA NUNCA deve presumir auto-inscrição global. Deve consultar o operador:
 >   * `"manual"` (Padrão para turmas fechadas/corporativas): auto-inscrição desativada, matrículas restritas via painel admin/CLI.

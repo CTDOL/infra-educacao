@@ -40,6 +40,9 @@ echo "==> Aplicando upgrade do Moodle e limpando caches..."
 "$PHP_BIN" "$MOODLE_DIR/admin/cli/upgrade.php" --non-interactive
 "$PHP_BIN" "$MOODLE_DIR/admin/cli/purge_caches.php"
 
+echo "==> Publicando atalhos curtos de cursos..."
+bash "$REPO_DIR/scripts/publicar_atalhos.sh" || echo "AVISO: atalhos com pendencias (nao bloqueia o deploy)."
+
 echo "==> Validando status do sistema..."
 bash "$REPO_DIR/scripts/status_moodle.sh"
 

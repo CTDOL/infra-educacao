@@ -9,6 +9,13 @@ RAIZ = Path(__file__).resolve().parent.parent / "courses"
 KEBAB = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 OPCAO = re.compile(r"^[A-Z][.)] \S")
 RESP = re.compile(r"^ANSWER: ([A-Z])$")
+# Pastas/rotas do Moodle que nao podem virar atalho curto (manter em sincronia com publicar_atalhos.sh).
+RESERVADOS = set(
+    "admin analytics auth availability backup badges blocks blog cache calendar cohort comment communication "
+    "competency completion contentbank course customfield enrol error files filter grade group h5p help install "
+    "lang lib local login media message mnet mod my notes payment pix plagiarism portfolio privacy question "
+    "rating report reportbuilder repository rss search tag theme user webservice cgi-bin".split()
+)
 erros = []
 
 
@@ -55,6 +62,11 @@ def main():
             if valor in vistos[chave]:
                 erro(f"{manifesto}: {chave} duplicado: {valor}")
             vistos[chave].add(valor)
+        if "shortlink" in dados:
+            if not isinstance(dados["shortlink"], bool):
+                erro(f"{manifesto}: shortlink deve ser true/false")
+            elif dados["shortlink"] and sn in RESERVADOS:
+                erro(f"{manifesto}: shortname '{sn}' e reservado do Moodle e nao pode ser atalho")
         if "image" in dados:
             img_rel = dados["image"]
             img_alvo = (pasta / img_rel).resolve()
