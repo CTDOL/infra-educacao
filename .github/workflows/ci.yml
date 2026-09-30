@@ -22,7 +22,7 @@ jobs:
               bash -n "$f"
             fi
           done
-          shellcheck -x -S warning scripts/*.sh || true
+          shellcheck -x -S warning scripts/*.sh
 
       - name: PHP lint do template de configuracao
         run: |

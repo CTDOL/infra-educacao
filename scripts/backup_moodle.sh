@@ -11,6 +11,11 @@ CONFIG_FILE="/home/ctdolc07/edu.ctdol.com.br/config.php"
 
 mkdir -p "$BACKUP_DIR"
 
+# Arquivo de credenciais temporario (600): evita a senha na linha de comando (visivel em `ps aux`)
+MYSQL_CNF="$(mktemp)"
+trap 'rm -f "$MYSQL_CNF"' EXIT
+chmod 600 "$MYSQL_CNF"
+
 echo "==> [$(date +'%Y-%m-%d %H:%M:%S')] Gerando backup do Moodle CTDOL..."
 
 # Extrair credenciais do config.php sem expor no terminal
@@ -18,11 +23,13 @@ DB_NAME=$(grep "\$CFG->dbname" "$CONFIG_FILE" | cut -d"'" -f2)
 DB_USER=$(grep "\$CFG->dbuser" "$CONFIG_FILE" | cut -d"'" -f2)
 DB_PASS=$(grep "\$CFG->dbpass" "$CONFIG_FILE" | cut -d"'" -f2)
 
+printf '[client]\nuser=%s\npassword=%s\n' "$DB_USER" "$DB_PASS" > "$MYSQL_CNF"
+
 DUMP_FILE="$BACKUP_DIR/moodle_db_${TIMESTAMP}.sql.gz"
 CONFIG_BACKUP="$BACKUP_DIR/config_${TIMESTAMP}.php"
 
 # Realizar dump MySQL limpo e compactar com gzip
-mysqldump -u "$DB_USER" -p"$DB_PASS" --no-tablespaces --single-transaction --quick "$DB_NAME" 2>/dev/null | gzip > "$DUMP_FILE"
+mysqldump --defaults-extra-file="$MYSQL_CNF" --no-tablespaces --single-transaction --quick "$DB_NAME" 2>/dev/null | gzip > "$DUMP_FILE"
 chmod 600 "$DUMP_FILE"
 
 # Snapshot do config.php
