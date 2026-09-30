@@ -22,6 +22,7 @@ quiz/<nome>_moodle_aiken.txt     # questões no formato Aiken
 | `category` | nome da categoria (criada se não existir) |
 | `format` | formato do curso (`topics`) |
 | `visible` | `0` oculto, `1` visível |
+| `shortlink` | `true` publica `edu.ctdol.com.br/<shortname>` (redireciona para `/course/info.php`, página pública com prévia de compartilhamento) |
 | `sections[]` | `name` + `lessons[]` (`title`,`file`) e/ou `quizzes[]` (`name`,`file`,`grade`,`attempts`) |
 
 ## Aiken
