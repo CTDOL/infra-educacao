@@ -39,3 +39,6 @@ jobs:
       - name: Permissao de execucao dos scripts
         run: |
           test -z "$(git ls-files -s scripts/*.sh | awk '$1!="100755"')"
+
+      - name: Validar cursos (manifesto + Aiken)
+        run: python3 scripts/validar_cursos.py

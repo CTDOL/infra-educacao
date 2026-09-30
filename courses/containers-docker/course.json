@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "shortname": "containers-docker",
+  "idnumber": "CTDOL-DEV-001",
+  "fullname": "Containers com Docker: do zero à primeira imagem",
+  "category": "_HOMOLOGACAO_SANDBOX",
+  "summary": "Curso introdutório sobre containers e Docker: conceitos, imagens, Dockerfile, volumes e redes.",
+  "format": "topics",
+  "visible": 0,
+  "sections": [
+    {
+      "name": "Módulo 1 — Fundamentos",
+      "lessons": [
+        { "title": "O que são containers", "file": "lessons/01-o-que-sao-containers.md" },
+        { "title": "Imagens e containers", "file": "lessons/02-imagens-e-containers.md" }
+      ]
+    },
+    {
+      "name": "Módulo 2 — Prática",
+      "lessons": [
+        { "title": "Escrevendo um Dockerfile", "file": "lessons/03-dockerfile.md" },
+        { "title": "Volumes e redes", "file": "lessons/04-volumes-e-redes.md" }
+      ]
+    },
+    {
+      "name": "Avaliação final",
+      "quizzes": [
+        {
+          "name": "Avaliação: Containers com Docker",
+          "file": "quiz/containers_docker_moodle_aiken.txt",
+          "grade": 10,
+          "attempts": 2
+        }
+      ]
+    }
+  ]
+}
