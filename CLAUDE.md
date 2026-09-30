@@ -32,10 +32,19 @@ Se o Keycloak estiver indisponível e o administrador precisar acessar via senha
 ```bash
 /usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/cfg.php --name=auth --set=manual,oauth2
 ```
+O formulário de login manual fica **oculto** (`showloginform=0`); para o Break-Glass é preciso exibi-lo também:
+```bash
+/usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/cfg.php --name=showloginform --set=1
+/usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/purge_caches.php
+```
 *Após restabelecer o Keycloak, reverter imediatamente para o padrão Zero Trust:*
 ```bash
 /usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/cfg.php --name=auth --set=oauth2
+/usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/cfg.php --name=showloginform --set=0
+/usr/local/bin/ea-php83 /home/ctdolc07/edu.ctdol.com.br/admin/cli/purge_caches.php
 ```
+> [!NOTE]
+> Tema ativo e `showloginform` são aplicados pelo deploy a partir de `config/site-settings.conf`, **uma vez por `SETTINGS_VERSION`** (`scripts/aplicar_config_site.sh`, com verificação e reversão automática). Um deploy comum não desfaz o Break-Glass; só subir a versão reaplica.
 
 ---
 
