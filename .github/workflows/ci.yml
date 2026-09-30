@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sintaxe bash + shellcheck
+        run: |
+          sudo apt-get install -y shellcheck
+          for f in scripts/*.sh; do
+            if [ -f "$f" ]; then
+              bash -n "$f"
+            fi
+          done
+          shellcheck -x -S warning scripts/*.sh || true
+
+      - name: PHP lint do template de configuracao
+        run: |
+          sudo apt-get install -y php-cli
+          if [ -f config/config.dist.php ]; then
+            php -l config/config.dist.php
+          fi
+
+      - name: Proibir segredos e arquivos sensiveis (Anti-Leak)
+        run: |
+          ! git ls-files | grep -E '(^|/)(config\.php|\.env|.*\.sql(\.gz)?)$'
+          ! git grep -nEi '(password|senha|secret)[^=]{0,20}=\s*["'\''][^<"'\'']{6,}' -- ':!docs' ':!*.md' ':!config/config.dist.php'
+
+      - name: Permissao de execucao dos scripts
+        run: |
+          test -z "$(git ls-files -s scripts/*.sh | awk '$1!="100755"')"

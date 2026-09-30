@@ -1,0 +1,24 @@
+# Arquivos de configuração reais com senhas
+config.php
+*.env
+*.env.*
+
+# Backups e Dumps SQL
+*.sql
+*.sql.gz
+/backups/
+
+# Logs e arquivos temporários
+*.log
+/logs/
+*.tmp
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Chaves privadas e certificados
+*.pem
+*.key
+*.id
+id_*
