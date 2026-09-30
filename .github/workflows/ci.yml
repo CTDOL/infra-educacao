@@ -30,6 +30,8 @@ jobs:
           if [ -f config/config.dist.php ]; then
             php -l config/config.dist.php
           fi
+          # Lint de todo PHP de tema e plugins locais versionados
+          find theme local scripts -name '*.php' -print0 | xargs -0 -n1 php -l >/dev/null
 
       - name: Proibir segredos e arquivos sensiveis (Anti-Leak)
         run: |
