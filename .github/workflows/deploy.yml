@@ -3,6 +3,7 @@ name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:   # disparo manual (Actions > Deploy > Run workflow), caso o push nao dispare
 
 concurrency: deploy-producao
 
@@ -23,3 +24,8 @@ jobs:
       - name: Disparar Deploy na VPS
         run: |
           ssh -i ~/.ssh/id -p "${{ secrets.VPS_PORT }}" -o BatchMode=yes "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+
+      - name: Verificar producao (site e botao SSO)
+        run: |
+          curl -fsS -m 30 -o /dev/null https://edu.ctdol.com.br/
+          curl -fsS -m 30 https://edu.ctdol.com.br/login/index.php | grep -q "Entrar com Conta CTDOL"
