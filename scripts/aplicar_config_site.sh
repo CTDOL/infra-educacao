@@ -70,7 +70,9 @@ if [ "$form_anterior" != "$SHOW_LOGIN_FORM" ]; then
   pagina="$(curl -fsS -m 30 "$SITE_URL/login/index.php")" || pagina=""
   ok=1
   grep -q 'Entrar com Conta CTDOL' <<<"$pagina" || ok=0            # botao SSO precisa continuar
-  if [ "$SHOW_LOGIN_FORM" = "0" ]; then grep -q 'name="username"' <<<"$pagina" && ok=0; fi
+  # O formulario de visitante (guestlogin) tem <input hidden name="username" value="guest">; por isso
+# o teste usa o campo visivel id="username" do formulario de login manual.
+  if [ "$SHOW_LOGIN_FORM" = "0" ]; then grep -q 'id="username"' <<<"$pagina" && ok=0; fi
   if [ "$ok" -eq 1 ]; then
     echo "OK: showloginform=$SHOW_LOGIN_FORM e botao SSO presente."
   else
