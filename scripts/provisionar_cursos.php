@@ -34,6 +34,7 @@ require($moodledir . '/config.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->libdir . '/resourcelib.php');
+require_once($CFG->dirroot . '/enrol/locallib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -183,6 +184,48 @@ function anexar_imagem_curso(stdClass $course, string $arquivo_imagem, bool $app
     logmsg('OK', "imagem de capa anexada ao curso ({$filerecord['filename']})");
 }
 
+
+function configurar_matricula(stdClass $course, stdClass $m, bool $apply): void {
+    global $DB;
+    $tipo = $m->enrolment->type ?? 'manual';
+    $senha = $m->enrolment->password ?? '';
+
+    logmsg($apply ? 'MATRIC' : 'DRY', "politica de inscricao: $tipo");
+    if (!$apply) {
+        return;
+    }
+
+    $instances = enrol_get_instances($course->id, false);
+    $self_instance = null;
+    foreach ($instances as $ins) {
+        if ($ins->enrol === 'self') {
+            $self_instance = $ins;
+            break;
+        }
+    }
+
+    $plugin = enrol_get_plugin('self');
+    if ($tipo === 'self') {
+        if (!$self_instance) {
+            $plugin->add_instance($course, ['status' => ENROL_INSTANCE_ENABLED, 'password' => $senha]);
+            logmsg('OK', "auto-inscricao (self) criada e ativada");
+        } else {
+            $plugin->update_status($self_instance, ENROL_INSTANCE_ENABLED);
+            if (!empty($senha)) {
+                $DB->set_field('enrol', 'password', $senha, ['id' => $self_instance->id]);
+            }
+            logmsg('OK', "auto-inscricao (self) ativada");
+        }
+    } else { // 'manual' ou 'fee'
+        if ($self_instance && (int)$self_instance->status !== ENROL_INSTANCE_DISABLED) {
+            $plugin->update_status($self_instance, ENROL_INSTANCE_DISABLED);
+            logmsg('OK', "auto-inscricao (self) desativada (curso fechado/corporativo)");
+        } else {
+            logmsg('OK', "inscricao manual/fechada mantida");
+        }
+    }
+}
+
 function publicar_pagina(stdClass $course, int $secao, string $titulo, string $html): void {
     global $DB;
     if ($p = $DB->get_record('page', ['course' => $course->id, 'name' => $titulo], '*', IGNORE_MULTIPLE)) {
@@ -298,6 +341,7 @@ foreach ($manifestos as $m) {
         if (!empty($m->image)) {
             anexar_imagem_curso($course, $m->_dir . '/' . $m->image, $apply);
         }
+        configurar_matricula($course, $m, $apply);
         foreach ($m->sections as $i => $sec) {
             $numero = $i + 1;
             if ($apply) {

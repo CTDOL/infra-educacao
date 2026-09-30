@@ -67,6 +67,9 @@ courses/
   "category": "CTDOL Dev / Formação Técnica",
   "summary": "Resumo curricular claro do curso para exibição no card da página inicial.",
   "image": "cover.jpg",
+  "enrolment": {
+    "type": "manual"
+  },
   "format": "topics",
   "visible": 1,
   "sections": [
@@ -93,6 +96,10 @@ courses/
 > [!IMPORTANT]
 > - `visible`: Deve ser `1` para aparecer na página inicial do Moodle.
 > - `category`: Se a categoria iniciar com `_` (ex: `_HOMOLOGACAO_SANDBOX`), o Moodle cria com `visible = 0` (oculta). Para cursos públicos, use categorias limpas sem prefixo `_`.
+> - `enrolment.type`: A IA NUNCA deve presumir auto-inscrição global. Deve consultar o operador:
+>   * `"manual"` (Padrão para turmas fechadas/corporativas): auto-inscrição desativada, matrículas restritas via painel admin/CLI.
+>   * `"self"` (Aberto/comunidade): auto-inscrição ativada (com campo `password` opcional).
+>   * `"fee"` (Monetizado/pago): matrícula condicionada à liquidação do pagamento.
 
 ### 3. Padrão das Aulas (`lessons/*.md`)
 - Sem frontmatter YAML (remover delimitadores `---`).

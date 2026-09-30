@@ -62,6 +62,18 @@ def main():
                 erro(f"{manifesto}: arquivo de imagem inexistente ou fora do curso: {img_rel}")
             elif not img_rel.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".svg")):
                 erro(f"{manifesto}: extensao de imagem invalida: {img_rel}")
+        if "enrolment" in dados:
+            enr = dados["enrolment"]
+            if not isinstance(enr, dict):
+                erro(f"{manifesto}: campo enrolment deve ser um objeto")
+            else:
+                tipo = enr.get("type")
+                if tipo not in ("manual", "self", "fee"):
+                    erro(f"{manifesto}: enrolment.type invalido: {tipo} (esperado: manual, self, fee)")
+                if tipo == "fee":
+                    fee = enr.get("fee", {})
+                    if not isinstance(fee, dict) or "amount" not in fee or float(fee.get("amount", 0)) <= 0:
+                        erro(f"{manifesto}: enrolment.fee deve conter amount positivo para tipo fee")
         for sec in dados.get("sections", []):
             itens = [l["file"] for l in sec.get("lessons", [])] + [q["file"] for q in sec.get("quizzes", [])]
             for rel in itens:

@@ -59,5 +59,8 @@
       ]
     }
   ],
-  "image": "cover.jpg"
+  "image": "cover.jpg",
+  "enrolment": {
+    "type": "manual"
+  }
 }
