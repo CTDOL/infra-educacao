@@ -12,9 +12,20 @@ FAILURES=0
 
 echo "=== [$(date +'%Y-%m-%d %H:%M:%S')] Diagnóstico de Saúde Moodle CTDOL ==="
 
+# Falhas transitorias (ex.: 525 do Cloudflare logo apos limpar caches): ate 3 tentativas.
+http_code() {
+  local c
+  for _ in 1 2 3; do
+    c=$(curl -s -o /dev/null -m 30 -w "%{http_code}" "$1")
+    case "$c" in 200|303) break ;; esac
+    sleep 5
+  done
+  echo "$c"
+}
+
 # 1. Checagem HTTP da Página Inicial e Login
 echo -n "[*] Testando endpoint público HTTPS (https://edu.ctdol.com.br)... "
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://edu.ctdol.com.br/)
+HTTP_CODE=$(http_code https://edu.ctdol.com.br/)
 if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 303 ]; then
   echo "OK (HTTP $HTTP_CODE)"
 else
@@ -24,7 +35,7 @@ fi
 
 # 2. Checagem da Tela de Login (Keycloak SSO)
 echo -n "[*] Testando tela de login SSO (https://edu.ctdol.com.br/login/index.php)... "
-LOGIN_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://edu.ctdol.com.br/login/index.php)
+LOGIN_CODE=$(http_code https://edu.ctdol.com.br/login/index.php)
 if [ "$LOGIN_CODE" -eq 200 ]; then
   echo "OK (HTTP $LOGIN_CODE)"
 else

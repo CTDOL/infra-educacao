@@ -24,6 +24,17 @@ cfg_get() { "$PHP_BIN" "$MOODLE_DIR/admin/cli/cfg.php" --name="$1" 2>/dev/null |
 cfg_set() { "$PHP_BIN" "$MOODLE_DIR/admin/cli/cfg.php" --name="$1" --set="$2" >/dev/null; }
 purge()   { "$PHP_BIN" "$MOODLE_DIR/admin/cli/purge_caches.php" >/dev/null; }
 
+# Apos purge/reinicio o Cloudflare pode devolver 5xx por alguns segundos e o primeiro
+# acesso recompila caches/CSS (lento): tenta ate 6 vezes antes de dar a verificacao como falha.
+fetch() { # fetch URL TIMEOUT
+  local out
+  for _ in 1 2 3 4 5 6; do
+    if out="$(curl -fsS -m "$2" "$1" 2>/dev/null)"; then printf '%s' "$out"; return 0; fi
+    sleep 5
+  done
+  return 1
+}
+
 [ -f "$SETTINGS_FILE" ] || { echo "ERRO: $SETTINGS_FILE inexistente." >&2; exit 1; }
 # Leitura restrita (sem 'source'): apenas as tres chaves esperadas.
 SETTINGS_VERSION=""; THEME=""; SHOW_LOGIN_FORM=""
@@ -51,8 +62,11 @@ echo "Aplicando config de site versao $SETTINGS_VERSION (aplicada: $APLICADA)...
 tema_anterior="$(cfg_get theme)"
 if [ "$tema_anterior" != "$THEME" ]; then
   cfg_set theme "$THEME"; purge
-  css_url="$(curl -fsS -m 30 "$SITE_URL/login/index.php" | grep -o "https\?://[^\"']*theme/styles.php/$THEME/[^\"']*" | head -1 | sed 's/&amp;/\&/g')" || css_url=""
-  if [ -n "$css_url" ] && curl -fsS -m 60 "$css_url" 2>/dev/null | grep -qi '0b2545'; then
+  pagina="$(fetch "$SITE_URL/login/index.php" 30)" || pagina=""
+  css_url="$(grep -o "https\?://[^\"']*theme/styles.php/$THEME/[^\"']*" <<<"$pagina" | sed -n '1p' | sed 's/&amp;/\&/g')" || css_url=""
+  css=""; [ -n "$css_url" ] && { css="$(fetch "$css_url" 120)" || css=""; }
+  # (variavel + grep <<<: evita SIGPIPE com pipefail quando o grep -q sai cedo)
+  if grep -qi '0b2545' <<<"$css"; then
     echo "OK: tema '$THEME' ativo e CSS carregando."
   else
     echo "FALHA: CSS do tema '$THEME' nao carregou; revertendo para '${tema_anterior:-boost}'." >&2
@@ -66,8 +80,8 @@ fi
 # ---- Formulario de login manual ---------------------------------------------
 form_anterior="$(cfg_get showloginform)"; form_anterior="${form_anterior:-1}"
 if [ "$form_anterior" != "$SHOW_LOGIN_FORM" ]; then
-  cfg_set showloginform "$SHOW_LOGIN_FORM"; purge
-  pagina="$(curl -fsS -m 30 "$SITE_URL/login/index.php")" || pagina=""
+  cfg_set showloginform "$SHOW_LOGIN_FORM"   # set_config ja invalida o cache de config; sem purge total
+  pagina="$(fetch "$SITE_URL/login/index.php" 60)" || pagina=""
   ok=1
   grep -q 'Entrar com Conta CTDOL' <<<"$pagina" || ok=0            # botao SSO precisa continuar
   # O formulario de visitante (guestlogin) tem <input hidden name="username" value="guest">; por isso
@@ -77,7 +91,7 @@ if [ "$form_anterior" != "$SHOW_LOGIN_FORM" ]; then
     echo "OK: showloginform=$SHOW_LOGIN_FORM e botao SSO presente."
   else
     echo "FALHA: verificacao do login; revertendo showloginform=$form_anterior." >&2
-    cfg_set showloginform "$form_anterior"; purge
+    cfg_set showloginform "$form_anterior"
     exit 1
   fi
 else
