@@ -107,6 +107,7 @@ function garantir_curso(stdClass $m, ?int $catid, bool $apply): ?stdClass {
                 $upd->fullname = $m->fullname;
                 $upd->summary = $m->summary ?? '';
                 $upd->summaryformat = FORMAT_HTML;
+                if (isset($m->visible)) { $upd->visible = (int)$m->visible; }
                 update_course($upd);
                 $existente = $DB->get_record('course', ['id' => $existente->id]);
             }

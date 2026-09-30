@@ -6,7 +6,7 @@
   "category": "_HOMOLOGACAO_SANDBOX",
   "summary": "Curso introdutório sobre containers e Docker: conceitos, imagens, Dockerfile, volumes e redes.",
   "format": "topics",
-  "visible": 0,
+  "visible": 1,
   "sections": [
     {
       "name": "Módulo 1 — Fundamentos",
