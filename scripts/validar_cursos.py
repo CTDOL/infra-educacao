@@ -84,8 +84,16 @@ def main():
                     erro(f"{manifesto}: enrolment.type invalido: {tipo} (esperado: manual, self, fee)")
                 if tipo == "fee":
                     fee = enr.get("fee", {})
-                    if not isinstance(fee, dict) or "amount" not in fee or float(fee.get("amount", 0)) <= 0:
+                    try:
+                        valor_ok = isinstance(fee, dict) and float(fee.get("amount", 0)) > 0
+                    except (TypeError, ValueError):
+                        valor_ok = False
+                    if not valor_ok:
                         erro(f"{manifesto}: enrolment.fee deve conter amount positivo para tipo fee")
+                    elif not re.fullmatch(r"[A-Z]{3}", str(fee.get("currency", ""))):
+                        erro(f"{manifesto}: enrolment.fee.currency deve ser codigo ISO de 3 letras (ex.: BRL)")
+                    elif not str(fee.get("account", "")).strip():
+                        erro(f"{manifesto}: enrolment.fee.account deve ter o nome da conta de pagamento do Moodle")
         for sec in dados.get("sections", []):
             itens = [l["file"] for l in sec.get("lessons", [])] + [q["file"] for q in sec.get("quizzes", [])]
             for rel in itens:
