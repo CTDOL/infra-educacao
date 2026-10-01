@@ -12,6 +12,25 @@ body { background-color: $ctdol-fundo; }
   .langmenu .btn, .icon, .navbar-text { color: #ffffff !important; }
   // ...mas os menus suspensos (fundo claro) mantem o texto escuro.
   .dropdown-menu .dropdown-item, .dropdown-menu a, .dropdown-menu .icon { color: $body-color !important; }
+
+  // Menu principal: o Boost pinta a aba ativa/hover com fundo claro (feito para navbar
+  // branca), o que deixava texto branco sobre branco. Aqui: realce translucido + barra dourada.
+  .primary-navigation .nav-link, .moremenu .nav-link {
+    &.active, &:hover, &:focus {
+      background-color: rgba(#ffffff, .12) !important;
+      color: #ffffff !important;
+    }
+    &.active {
+      border-bottom-color: $ctdol-dourado !important;
+      font-weight: 600;
+    }
+  }
+
+  // Rotulo "Modo de edicao": o Boost usa texto escuro (ilegivel sobre o azul).
+  .editmode-switch-form, .editmode-switch-form label,
+  .editmode-switch-form .custom-control-label, .editmode-switch-form .form-check-label {
+    color: #ffffff !important;
+  }
 }
 
 .btn-primary {
