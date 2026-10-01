@@ -91,14 +91,24 @@ if ($quer('saude')) {
         // nao usa \core\update\checker, que grava a resposta no banco). So o veredito sai no log.
         require $CFG->dirroot . '/version.php';
         require_once $CFG->libdir . '/filelib.php';
-        $url = 'https://download.moodle.org/api/1.3/updates.php?format=json&version=' . urlencode((string)$version)
-             . '&branch=' . urlencode((string)$branch);
-        $resp = json_decode((string)download_file_content($url, null, null, false, 20, 10), true);
-        if (($resp['status'] ?? '') !== 'OK') {
-            lin('Patch do Moodle', 'indisponivel (API de atualizacoes nao respondeu)');
+        // Mesmos parametros do \core\update\checker: branch no formato '4.5' (moodle_major_version), via POST.
+        $ramo = moodle_major_version();
+        $bruto = download_file_content('https://download.moodle.org/api/1.3/updates.php', null,
+            ['format' => 'json', 'version' => $version, 'branch' => $ramo], false, 20, 10);
+        $resp = json_decode((string)$bruto, true);
+        // Motivo resumido, sem ecoar a resposta.
+        if ($bruto === false || $bruto === '') {
+            lin('Patch do Moodle', 'indisponivel (sem resposta: VPS sem saida HTTPS para download.moodle.org?)');
             return;
         }
-        $ramo = intdiv((int)$branch, 100) . '.' . ((int)$branch % 100);   // '405' -> '4.5'
+        if (!is_array($resp)) {
+            lin('Patch do Moodle', 'indisponivel (resposta da API nao e JSON)');
+            return;
+        }
+        if (($resp['status'] ?? '') !== 'OK') {
+            lin('Patch do Moodle', 'indisponivel (API respondeu status "' . substr((string)($resp['status'] ?? 'vazio'), 0, 30) . '")');
+            return;
+        }
         $mesmo = $maior = 0;
         foreach ($resp['updates']['core'] ?? [] as $u) {
             if ((float)($u['version'] ?? 0) <= (float)$version) {
