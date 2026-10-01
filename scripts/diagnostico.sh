@@ -27,8 +27,12 @@ principal() {
   echo "  Memoria livre: $(free -m 2>/dev/null | awk '/Mem:/ {print $7" MB disponiveis de "$2" MB"}')"
   echo "  Carga: $(cut -d' ' -f1-3 /proc/loadavg 2>/dev/null)"
   ultimo=$(ls -1t "$BACKUPS" 2>/dev/null | head -n 1)
-  echo "  Ultimo backup: ${ultimo:-nenhum encontrado} ($(ls -1 "$BACKUPS" 2>/dev/null | wc -l) arquivos)"
-  echo "  Commit implantado: $(git -C "$REPO_DIR" log -1 --format='%h %s' 2>/dev/null)"
+  if [ -n "$ultimo" ]; then
+    echo "  Ultimo backup: ha $(( ($(date +%s) - $(stat -c %Y "$BACKUPS/$ultimo")) / 3600 )) h ($(ls -1 "$BACKUPS" 2>/dev/null | wc -l) guardados)"
+  else
+    echo "  Ultimo backup: NENHUM encontrado (ATENCAO)"
+  fi
+  echo "  Commit implantado: $(git -C "$REPO_DIR" log -1 --format='%h' 2>/dev/null)"
 
   echo
   echo "=== HTTP (visao externa) ==="
@@ -37,13 +41,17 @@ principal() {
   done
   curl -s -m 30 https://edu.ctdol.com.br/login/index.php | grep -q "Entrar com Conta CTDOL" \
     && echo "  Botao SSO 'Entrar com Conta CTDOL': presente" || echo "  Botao SSO 'Entrar com Conta CTDOL': AUSENTE"
-  echo "  Cabecalhos de seguranca:"
-  curl -sI -m 30 https://edu.ctdol.com.br/ | grep -iE '^(strict-transport-security|x-frame-options|x-content-type-options|content-security-policy|server|x-powered-by):' | sed 's/^/    /'
+  echo "  Cabecalhos de seguranca (presente/AUSENTE):"
+  cab=$(curl -sI -m 30 https://edu.ctdol.com.br/)
+  for h in strict-transport-security x-frame-options x-content-type-options content-security-policy; do
+    echo "$cab" | grep -qi "^$h:" && echo "    $h: presente" || echo "    $h: AUSENTE"
+  done
+  echo "$cab" | grep -qiE '^(server|x-powered-by):.*[0-9]' && echo "    versao de software exposta em cabecalho: ATENCAO"
 
   echo
   echo "=== ARQUIVOS SENSIVEIS NA RAIZ WEB ==="
-  achados=$(find "$MOODLE_DIR" -maxdepth 2 -type f \( -name '*.sql' -o -name '*.sql.gz' -o -name '.env' -o -name '*.bak' -o -name '*.mbz' -o -name 'config.php.*' \) 2>/dev/null | head -n 10)
-  echo "${achados:-  nenhum encontrado}"
+  n_achados=$(find "$MOODLE_DIR" -maxdepth 2 -type f \( -name '*.sql' -o -name '*.sql.gz' -o -name '.env' -o -name '*.bak' -o -name '*.mbz' -o -name 'config.php.*' \) 2>/dev/null | wc -l)
+  echo "  Arquivos suspeitos (dump/.env/.bak/.mbz): $n_achados $([ "$n_achados" -eq 0 ] && echo OK || echo 'ATENCAO - ver no servidor')"
 
   "$PHP_BIN" "$REPO_DIR/scripts/diagnostico.php" tudo 2>&1
 

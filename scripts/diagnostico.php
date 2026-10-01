@@ -3,6 +3,8 @@
 // diagnostico.php — Diagnostico SOMENTE LEITURA do Moodle (pagamento, saude, erros, seguranca)
 // Uso: /usr/local/bin/ea-php83 scripts/diagnostico.php [pagamento|saude|erros|seguranca|tudo]
 // Nunca imprime segredos (config de gateways, client secrets, senhas) e nunca escreve no banco.
+// SAIDA PUBLICA: o repositorio e publico e o log do Actions tambem. Por isso so saem contagens e
+// estados (OK/ATENCAO) — sem usuarios, IPs, URLs, versoes exatas, nomes de arquivo ou linhas de log.
 // ==============================================================================
 define('CLI_SCRIPT', true);
 require '/home/ctdolc07/edu.ctdol.com.br/config.php';
@@ -36,7 +38,7 @@ if ($quer('pagamento')) {
         $contas = $DB->get_records('payment_accounts');
         if (!$contas) { echo '    nenhuma conta cadastrada' . PHP_EOL; }
         foreach ($contas as $c) {
-            echo "    - #{$c->id} {$c->name} | conta ativa: " . ($c->enabled ? 'sim' : 'nao') . PHP_EOL;
+            echo "    - conta #{$c->id} | ativa: " . ($c->enabled ? 'sim' : 'nao') . PHP_EOL;
             // Somente gateway/estado — NUNCA o campo "config" (guarda credenciais).
             $gws = $DB->get_records('payment_gateways', ['accountid' => $c->id], '', 'id,gateway,enabled');
             foreach ($gws as $g) { echo "        gateway {$g->gateway}: " . ($g->enabled ? 'habilitado' : 'desabilitado') . PHP_EOL; }
@@ -65,10 +67,9 @@ if ($quer('saude')) {
     titulo('SAUDE GERAL');
     tentar(function () use ($DB, $CFG, $ok) {
         require $CFG->dirroot . '/version.php';
-        lin('Moodle', "$release ($version)");
-        lin('PHP', PHP_VERSION);
+        lin('Moodle (major.minor)', implode('.', array_slice(explode('.', preg_replace('/[^0-9.].*/', '', $release)), 0, 2)));
         lin('Modo manutencao', (bool)get_config('core', 'maintenance_enabled'));
-        lin('Tema ativo', $CFG->theme);
+        lin('Tema ativo e o esperado (ctdol)', $ok($CFG->theme === 'ctdol'));
         $cron = (int)get_config('tool_task', 'lastcronstart');
         $cron = $cron ?: (int)get_config('core', 'lastcronstart');
         lin('Ultimo cron', $cron ? userdate($cron) . ' (' . round((time() - $cron) / 60) . ' min atras) ' . $ok(time() - $cron < 900) : 'nunca');
@@ -97,11 +98,10 @@ if ($quer('erros')) {
         foreach ($f as $x) { echo "    - {$x->classname}: {$x->n}x (ultima " . userdate((int)$x->ultimo) . ')' . PHP_EOL; }
     });
     tentar(function () use ($CFG) {
-        foreach ([$CFG->dirroot . '/error_log', $CFG->dirroot . '/admin/error_log', '/home/ctdolc07/logs/edu.ctdol.com.br.error.log'] as $arq) {
-            if (is_readable($arq) && filesize($arq) > 0) {
-                echo "  Ultimas linhas de $arq (" . round(filesize($arq) / 1024) . ' KB):' . PHP_EOL;
-                $l = array_slice(file($arq, FILE_IGNORE_NEW_LINES) ?: [], -15);
-                foreach ($l as $x) { echo '    ' . substr($x, 0, 220) . PHP_EOL; }
+        // Somente tamanho/idade dos logs: o conteudo pode ter caminhos, usuarios e IPs.
+        foreach (['error_log' => $CFG->dirroot . '/error_log', 'admin/error_log' => $CFG->dirroot . '/admin/error_log', 'logs/edu.error.log' => '/home/ctdolc07/logs/edu.ctdol.com.br.error.log'] as $rot => $arq) {
+            if (is_readable($arq)) {
+                lin("Log $rot", round(filesize($arq) / 1024) . ' KB, modificado ha ' . round((time() - filemtime($arq)) / 3600) . ' h');
             }
         }
     });
@@ -115,9 +115,8 @@ if ($quer('seguranca')) {
         lin('Metodos de autenticacao', $auth);
         lin('SSO oauth2 ativo', in_array('oauth2', explode(',', $auth), true));
         lin('Login manual escondido (showloginform=0)', empty($CFG->showloginform));
-        foreach ($DB->get_records('oauth2_issuer', null, '', 'id,name,baseurl,enabled') as $i) {
-            lin("Issuer {$i->name}", ($i->enabled ? 'ativo' : 'INATIVO') . " | {$i->baseurl}");
-        }
+        $iss = $DB->get_records('oauth2_issuer', null, '', 'id,enabled');
+        lin('Emissores OAuth2 (ativos/total)', count(array_filter($iss, fn($i) => $i->enabled)) . '/' . count($iss));
         lin('Auto-cadastro (registerauth)', (string)($CFG->registerauth ?: 'desativado'));
         lin('Botao visitante (guestloginbutton)', !empty($CFG->guestloginbutton));
         lin('Forcar login em perfis', !empty($CFG->forceloginforprofiles));
@@ -125,21 +124,20 @@ if ($quer('seguranca')) {
         lin('Politica de senha', !empty($CFG->passwordpolicy));
         lin('Permitir iframe (allowframembedding)', !empty($CFG->allowframembedding));
 
-        $admins = $DB->get_records_list('user', 'id', explode(',', (string)$CFG->siteadmins), '', 'id,username,suspended,lastaccess');
-        echo '  Administradores do site:' . PHP_EOL;
-        foreach ($admins as $a) {
-            echo "    - {$a->username} | " . ($a->suspended ? 'suspenso' : 'ativo') . ' | ultimo acesso ' . ($a->lastaccess ? userdate((int)$a->lastaccess) : 'nunca') . PHP_EOL;
-        }
+        $admins = $DB->get_records_list('user', 'id', explode(',', (string)$CFG->siteadmins), '', 'id,suspended,lastaccess');
+        lin('Administradores do site (ativos)', count(array_filter($admins, fn($a) => !$a->suspended)));
+        lin('Admins sem acesso ha +90 dias', count(array_filter($admins, fn($a) => !$a->suspended && $a->lastaccess < time() - 90 * 86400)));
 
         $desde = time() - 86400;
         lin('Logins falhos (24h)', $DB->count_records_select('logstore_standard_log', "eventname = ? AND timecreated > ?", ['\core\event\user_login_failed', $desde]));
-        $top = $DB->get_records_sql("SELECT ip, COUNT(*) n FROM {logstore_standard_log}
-                                      WHERE eventname = ? AND timecreated > ? GROUP BY ip ORDER BY n DESC", ['\core\event\user_login_failed', $desde], 0, 5);
-        foreach ($top as $t) { echo "    IP {$t->ip}: {$t->n} falhas" . PHP_EOL; }
+        $ips = $DB->get_field_sql("SELECT COUNT(DISTINCT ip) FROM {logstore_standard_log} WHERE eventname = ? AND timecreated > ?", ['\core\event\user_login_failed', $desde]);
+        lin('IPs distintos com login falho (24h)', $ips);
+        $topn = $DB->get_field_sql("SELECT MAX(n) FROM (SELECT COUNT(*) n FROM {logstore_standard_log} WHERE eventname = ? AND timecreated > ? GROUP BY ip) t", ['\core\event\user_login_failed', $desde]);
+        lin('Maximo de falhas de um unico IP', $topn ?: 0);
 
         $cfg = $CFG->dirroot . '/config.php';
-        lin('Permissao do config.php', substr(sprintf('%o', fileperms($cfg)), -4) . ' ' . $ok((fileperms($cfg) & 0007) === 0));
-        lin('Permissao do moodledata', substr(sprintf('%o', fileperms($CFG->dataroot)), -4));
+        lin('config.php sem acesso a "outros"', $ok((fileperms($cfg) & 0007) === 0));
+        lin('moodledata sem acesso a "outros"', $ok((fileperms($CFG->dataroot) & 0007) === 0));
     });
 }
 echo PHP_EOL;
