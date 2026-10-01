@@ -224,6 +224,80 @@ function configurar_matricula(stdClass $course, stdClass $m, bool $apply): void 
             logmsg('OK', "inscricao manual/fechada mantida");
         }
     }
+    configurar_matricula_paga($course, $tipo === 'fee' ? ($m->enrolment->fee ?? null) : null, $instances);
+}
+
+/**
+ * Matricula paga (enrol_fee + gateway do Moodle, ex.: PayPal).
+ * - $fee null: curso nao e pago -> desativa (sem apagar) instancia fee existente.
+ * - Conta de pagamento ausente/sem gateway ativo: NAO cria nada (curso segue fechado) e avisa.
+ * Credenciais do gateway ficam so no painel do Moodle, nunca no Git.
+ */
+function configurar_matricula_paga(stdClass $course, ?stdClass $fee, array $instances): void {
+    global $DB;
+    $existente = null;
+    foreach ($instances as $ins) {
+        if ($ins->enrol === 'fee') {
+            $existente = $ins;
+            break;
+        }
+    }
+
+    if ($fee === null) {
+        if ($existente && (int)$existente->status !== ENROL_INSTANCE_DISABLED) {
+            enrol_get_plugin('fee')->update_status($existente, ENROL_INSTANCE_DISABLED);
+            logmsg('OK', "matricula paga desativada (manifesto nao e mais 'fee'; historico preservado)");
+        }
+        return;
+    }
+
+    $valor  = number_format((float)$fee->amount, 2, '.', '');
+    $moeda  = strtoupper((string)$fee->currency);
+    $nomecta = (string)$fee->account;
+
+    $conta = $DB->get_record('payment_accounts', ['name' => $nomecta, 'archived' => 0]);
+    if (!$conta || !$conta->enabled) {
+        logmsg('AVISO', "conta de pagamento '$nomecta' inexistente ou inativa: matricula paga NAO criada "
+            . "(crie em Administracao > Geral > Pagamentos > Contas de pagamento)");
+        return;
+    }
+    if (!$DB->record_exists('payment_gateways', ['accountid' => $conta->id, 'enabled' => 1])) {
+        logmsg('AVISO', "conta '$nomecta' sem gateway habilitado (ex.: PayPal): matricula paga NAO criada");
+        return;
+    }
+
+    if (!enrol_is_enabled('fee')) {
+        \core\plugininfo\enrol::enable_plugin('fee', 1);
+        logmsg('OK', "plugin de matricula 'fee' (pagamento) habilitado no site");
+    }
+    $plugin = enrol_get_plugin('fee');
+
+    if (!$existente) {
+        $roleid = (int)$plugin->get_config('roleid')
+            ?: (int)$DB->get_field('role', 'id', ['archetype' => 'student'], IGNORE_MULTIPLE);
+        $plugin->add_instance($course, [
+            'status' => ENROL_INSTANCE_ENABLED, 'cost' => $valor, 'currency' => $moeda,
+            'customint1' => $conta->id, 'roleid' => $roleid,
+        ]);
+        logmsg('CRIA', "matricula paga: $valor $moeda (conta '$nomecta')");
+        return;
+    }
+
+    $mudou = (float)$existente->cost !== (float)$valor || $existente->currency !== $moeda || (int)$existente->customint1 !== (int)$conta->id;
+    if ($mudou) {
+        $DB->update_record('enrol', (object) [
+            'id' => $existente->id, 'cost' => $valor, 'currency' => $moeda,
+            'customint1' => $conta->id, 'timemodified' => time(),
+        ]);
+        logmsg('ATUAL', "matricula paga: $valor $moeda (conta '$nomecta'); vale para novas compras");
+    }
+    if ((int)$existente->status !== ENROL_INSTANCE_ENABLED) {
+        $plugin->update_status($existente, ENROL_INSTANCE_ENABLED);
+        logmsg('OK', "matricula paga reativada");
+    }
+    if (!$mudou) {
+        logmsg('OK', "matricula paga inalterada ($valor $moeda)");
+    }
 }
 
 function publicar_pagina(stdClass $course, int $secao, string $titulo, string $html): void {

@@ -109,7 +109,12 @@ courses/
 > - `enrolment.type`: A IA NUNCA deve presumir auto-inscrição global. Deve consultar o operador:
 >   * `"manual"` (Padrão para turmas fechadas/corporativas): auto-inscrição desativada, matrículas restritas via painel admin/CLI.
 >   * `"self"` (Aberto/comunidade): auto-inscrição ativada (com campo `password` opcional).
->   * `"fee"` (Monetizado/pago): matrícula condicionada à liquidação do pagamento.
+>   * `"fee"` (Monetizado/pago): matrícula condicionada à liquidação do pagamento. Exige
+>     `"fee": { "amount": 297.00, "currency": "BRL", "account": "<nome da conta de pagamento>" }`.
+>     A conta (com o gateway PayPal e suas credenciais) é criada **só no painel** do Moodle
+>     (*Administração > Geral > Pagamentos > Contas de pagamento*), nunca no Git. Sem conta/gateway
+>     ativo, o provisionador não cria a matrícula paga e o curso segue fechado. Mudar o preço vale só
+>     para novas compras; trocar o tipo de `fee` para outro desativa (sem apagar) a matrícula paga.
 
 ### 3. Padrão das Aulas (`lessons/*.md`)
 - Sem frontmatter YAML (remover delimitadores `---`).
