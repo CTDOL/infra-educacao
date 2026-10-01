@@ -1,0 +1,46 @@
+name: Diagnostico
+
+# Diagnostico SOMENTE LEITURA da producao (pagamento, saude, erros, seguranca).
+# Disparo manual: Actions > Diagnostico > Run workflow.
+# Usa a mesma chave do deploy; o forced command da VPS so aceita o modo fixo "diagnostico".
+on:
+  workflow_dispatch:
+
+concurrency: deploy-producao   # nunca em paralelo com um deploy
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostico:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Preparar SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id && chmod 600 ~/.ssh/id
+          echo "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Executar diagnostico na VPS
+        run: |
+          ssh -i ~/.ssh/id -p "${{ secrets.VPS_PORT }}" -o BatchMode=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" diagnostico | tee diagnostico.txt
+
+      - name: Publicar no resumo da execucao
+        if: always()
+        run: |
+          {
+            echo '## Diagnostico de producao'
+            echo '```'
+            cat diagnostico.txt 2>/dev/null || echo 'sem saida'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar relatorio (3 dias)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico
+          path: diagnostico.txt
+          retention-days: 3

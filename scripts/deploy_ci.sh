@@ -18,6 +18,11 @@ if [ "${CTDOL_DEPLOY_ETAPA:-1}" = "1" ]; then
   git fetch origin main
   git merge --ff-only origin/main
   chmod +x "$REPO_DIR"/scripts/*.sh
+  # Modo diagnostico (somente leitura): o workflow "Diagnostico" chama "ssh ... diagnostico".
+  # Lista fechada: qualquer outro comando recebido cai no deploy normal (comportamento antigo).
+  if [ "${SSH_ORIGINAL_COMMAND:-}" = "diagnostico" ]; then
+    exec bash "$REPO_DIR/scripts/diagnostico.sh"
+  fi
   CTDOL_DEPLOY_ETAPA=2 exec bash "$REPO_DIR/scripts/deploy_ci.sh"
 fi
 
