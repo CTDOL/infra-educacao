@@ -39,7 +39,9 @@ principal() {
   for u in "https://edu.ctdol.com.br/" "https://edu.ctdol.com.br/login/index.php"; do
     echo "  $u -> HTTP $(curl -s -o /dev/null -m 30 -w '%{http_code} em %{time_total}s' "$u")"
   done
-  curl -s -m 30 https://edu.ctdol.com.br/login/index.php | grep -q "Entrar com Conta CTDOL" \
+  # Captura em variavel: "curl | grep -q" com pipefail da falso negativo (SIGPIPE no curl).
+  login_html=$(curl -s -m 30 https://edu.ctdol.com.br/login/index.php)
+  grep -q "Entrar com Conta CTDOL" <<<"$login_html" \
     && echo "  Botao SSO 'Entrar com Conta CTDOL': presente" || echo "  Botao SSO 'Entrar com Conta CTDOL': AUSENTE"
   echo "  Cabecalhos de seguranca (presente/AUSENTE):"
   cab=$(curl -sI -m 30 https://edu.ctdol.com.br/)
@@ -51,7 +53,17 @@ principal() {
   echo
   echo "=== ARQUIVOS SENSIVEIS NA RAIZ WEB ==="
   n_achados=$(find "$MOODLE_DIR" -maxdepth 2 -type f \( -name '*.sql' -o -name '*.sql.gz' -o -name '.env' -o -name '*.bak' -o -name '*.mbz' -o -name 'config.php.*' \) 2>/dev/null | wc -l)
+  # So o TIPO e a contagem (o nome do arquivo nao sai: o log do Actions e publico).
+  for padrao in '*.sql' '*.sql.gz' '.env' '*.bak' '*.mbz' 'config.php.*'; do
+    n=$(find "$MOODLE_DIR" -maxdepth 2 -type f -name "$padrao" 2>/dev/null | wc -l)
+    [ "$n" -gt 0 ] && echo "    tipo $padrao: $n"
+  done
   echo "  Arquivos suspeitos (dump/.env/.bak/.mbz): $n_achados $([ "$n_achados" -eq 0 ] && echo OK || echo 'ATENCAO - ver no servidor')"
+
+  echo
+  echo "=== CRON ==="
+  echo "  Entradas de crontab do usuario com cron.php: $(crontab -l 2>/dev/null | grep -v '^#' | grep -c 'admin/cli/cron.php')"
+  echo "  (0 = cron do Moodle nao agendado nesta conta; conferir tambem no cPanel > Cron Jobs)"
 
   "$PHP_BIN" "$REPO_DIR/scripts/diagnostico.php" tudo 2>&1
 

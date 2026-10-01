@@ -80,8 +80,11 @@ if ($quer('saude')) {
         lin('Matriculas ativas', $DB->count_records('user_enrolments', ['status' => 0]));
         $ult = $DB->get_field_sql('SELECT MAX(timecreated) FROM {logstore_standard_log}');
         lin('Ultima atividade registrada', $ult ? userdate((int)$ult) : 'sem logs');
-        $plug = core_plugin_manager::instance()->get_plugins_requiring_dependencies();
-        lin('Plugins com dependencias pendentes', count($plug));
+        lin('Upgrade do Moodle pendente', $ok(!moodle_needs_upgrading()));
+        $pm = core_plugin_manager::instance();
+        if (method_exists($pm, 'plugins_need_upgrading')) {
+            lin('Plugins aguardando upgrade', count($pm->plugins_need_upgrading()));
+        }
     });
 }
 
