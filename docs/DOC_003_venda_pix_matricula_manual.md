@@ -11,6 +11,9 @@
 A página pública do curso (`https://edu.ctdol.com.br/<shortname>`) mostra, no resumo do curso
 (`summary` do `course.json`), o bloco **"Como comprar"**: preço, link de pagamento e WhatsApp.
 
+Valores atuais do `containers-docker`: **R$ 100,00**, link `https://mpago.la/2fc99ZD`
+(Mercado Pago), WhatsApp Business **(51) 98552-2891**.
+
 Regras para esse bloco (o repositório é **público**):
 - Use **link de pagamento** (ou chave Pix **aleatória**). **Nunca** CPF, e-mail ou telefone pessoal como chave Pix.
 - O WhatsApp publicado deve ser o **Business** da CTDOL.
