@@ -86,6 +86,29 @@ if ($quer('saude')) {
             lin('Plugins aguardando upgrade', count($pm->plugins_need_upgrading()));
         }
     });
+    tentar(function () use ($CFG) {
+        // Patch do ramo: consulta direta a API publica de atualizacoes do Moodle (somente leitura;
+        // nao usa \core\update\checker, que grava a resposta no banco). So o veredito sai no log.
+        require $CFG->dirroot . '/version.php';
+        require_once $CFG->libdir . '/filelib.php';
+        $url = 'https://download.moodle.org/api/1.3/updates.php?format=json&version=' . urlencode((string)$version)
+             . '&branch=' . urlencode((string)$branch);
+        $resp = json_decode((string)download_file_content($url, null, null, false, 20, 10), true);
+        if (($resp['status'] ?? '') !== 'OK') {
+            lin('Patch do Moodle', 'indisponivel (API de atualizacoes nao respondeu)');
+            return;
+        }
+        $ramo = intdiv((int)$branch, 100) . '.' . ((int)$branch % 100);   // '405' -> '4.5'
+        $mesmo = $maior = 0;
+        foreach ($resp['updates']['core'] ?? [] as $u) {
+            if ((float)($u['version'] ?? 0) <= (float)$version) {
+                continue;
+            }
+            (($u['branch'] ?? '') === $ramo) ? $mesmo++ : $maior++;
+        }
+        lin("Patch do ramo $ramo", $mesmo ? "ATRASADO ($mesmo atualizacao(oes) do mesmo ramo disponivel)" : 'atualizado');
+        lin('Versao maior mais nova disponivel', $maior ? 'sim' : 'nao');
+    });
 }
 
 // ----------------------------------------------------------------------- ERROS
