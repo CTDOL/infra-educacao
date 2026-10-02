@@ -8,6 +8,7 @@
   "image": "cover.jpg",
   "format": "topics",
   "visible": 1,
+  "shortlink": true,
   "enrolment": {
     "type": "manual"
   },
