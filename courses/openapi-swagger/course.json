@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "shortname": "openapi-swagger",
+  "idnumber": "CTDOL-DEV-004",
+  "fullname": "Design de Contratos de API com OpenAPI 3.1 & Swagger (Do Conceito ao Código)",
+  "category": "CTDOL Dev / Formação Técnica",
+  "summary": "Nano-curso prático sobre a especificação OpenAPI 3.1 e a suíte Swagger UI. Aprenda o paradigma Docs-as-Code, a anatomia de contratos RESTful, automação em FastAPI e geração de SDKs tipados para o frontend.",
+  "image": "cover.jpg",
+  "format": "topics",
+  "visible": 1,
+  "enrolment": {
+    "type": "manual"
+  },
+  "sections": [
+    {
+      "name": "Módulo 1: Fundamentos e Anatomia de Contratos",
+      "summary": "Compreenda por que APIs sem contrato falham em produção e domine a estrutura formal de um documento OpenAPI 3.1.",
+      "lessons": [
+        {
+          "title": "Aula 01: Fundamentos de Contratos de API, Anatomia da OpenAPI 3.1 e a Suíte Swagger",
+          "file": "lessons/01-fundamentos-contratos-openapi-swagger.md"
+        }
+      ]
+    },
+    {
+      "name": "Módulo 2: Docs-as-Code, Automação e Qualidade",
+      "summary": "Implementação prática em FastAPI, console interativo Swagger UI, autenticação Bearer, geração de clientes TypeScript e linters.",
+      "lessons": [
+        {
+          "title": "Aula 02: Docs-as-Code na Prática: FastAPI, Swagger UI, Geração de Clientes e Linters",
+          "file": "lessons/02-docs-as-code-fastapi-e-clientes.md"
+        }
+      ]
+    },
+    {
+      "name": "Avaliação de Certificação",
+      "quizzes": [
+        {
+          "name": "Avaliação Oficial: Design de Contratos OpenAPI 3.1 & Swagger",
+          "file": "quiz/openapi_swagger_moodle_aiken.txt",
+          "grade": 10,
+          "attempts": 3
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+Qual é a principal distinção arquitetural e histórica entre OpenAPI e Swagger?
+A. Swagger é a norma de especificação da ISO, enquanto OpenAPI é uma ferramenta comercial privada mantida pela Microsoft.
+B. OpenAPI é a especificação formal de contrato gerenciada pela Linux Foundation, enquanto Swagger é a suíte de ferramentas mantida pela SmartBear.
+C. OpenAPI aplica-se apenas a bancos de dados NoSQL, enquanto Swagger é exclusivo para serviços GraphQL.
+D. Não há nenhuma distinção, tratando-se de marcas registradas idênticas da mesma empresa.
+ANSWER: B
+
+Por que a documentação manual de APIs (mantida em wikis, PDFs ou planilhas estáticas) é considerada um anti-padrão de engenharia segundo o princípio Docs-as-Code?
+A. Porque wikis em Markdown ocupam muito espaço de armazenamento nos servidores em nuvem.
+B. Porque os navegadores modernos bloquearam a leitura de arquivos PDF por motivos de segurança.
+C. Porque ela se desatualiza rapidamente na primeira alteração de código, passando a mentir para o desenvolvedor e para o cliente.
+D. Porque o protocolo HTTP 1.1 exige que a documentação seja obrigatoriamente transmitida em binário.
+ANSWER: C
+
+Na abordagem Contract-First (API-First), qual é a sequência correta do fluxo de trabalho de desenvolvimento?
+A. Implementar todo o banco de dados, colocar em produção e depois desenhar o contrato visual.
+B. O desenvolvedor do frontend escreve o código e o backend tenta adivinhar quais parâmetros foram enviados.
+C. O contrato formal OpenAPI é redigido e acordado entre as equipes antes do início da codificação do backend e frontend.
+D. A documentação é redigida apenas quando o software entra em fase de descontinuação (legado).
+ANSWER: C
+
+No desenho de rotas e recursos segundo as boas práticas RESTful e OpenAPI, como devem ser nomeados os endpoints?
+A. Utilizando verbos de ação na URL, como /criarPaciente ou /atualizarSessao.
+B. Utilizando substantivos no plural que representam coleções de recursos, como /pacientes e /sessoes.
+C. Utilizando identificadores numéricos puros na raiz do domínio, como /1/2/3.
+D. O nome da URL é irrelevante, desde que todas as requisições usem o método POST.
+ANSWER: B
+
+Qual é a finalidade da seção components.schemas em um documento da especificação OpenAPI 3.1?
+A. Armazenar as credenciais e senhas criptografadas do banco de dados de produção.
+B. Definir os scripts de automação do Docker Compose e Kubernetes.
+C. Permitir o reúso de definições de estruturas de dados (DTOs) através de ponteiros ($ref), evitando duplicação de schemas.
+D. Configurar as fontes e paletas de cores da interface web.
+ANSWER: C
+
+Em uma API RESTful governada por contrato, qual status code HTTP deve ser retornado quando a requisição possui JSON sintaticamente válido, mas a regra de negócio do domínio recusa a operação (por exemplo, ausência de consentimento ativo do paciente)?
+A. 200 OK com uma mensagem de erro dentro do JSON de resposta.
+B. 422 Unprocessable Entity ou 403 Forbidden (conforme a natureza da trava de autorização/domínio).
+C. 500 Internal Server Error indicando falha grave no hardware.
+D. 301 Moved Permanently redirecionando para a página inicial.
+ANSWER: B
+
+Como o framework FastAPI (Python) materializa o paradigma Docs-as-Code e integra-se à especificação OpenAPI?
+A. Exigindo que o desenvolvedor redija arquivos YAML de 5000 linhas à mão antes de compilar o Python.
+B. Gerando a especificação OpenAPI 3.1 automaticamente em /openapi.json e a interface Swagger UI em /docs a partir dos tipos Python e modelos Pydantic.
+C. Utilizando inteligência artificial para adivinhar o comportamento de rotas sem tipagem declarada.
+D. Fazendo scraping na tela do usuário para extrair o código visual.
+ANSWER: B
+
+Qual é o risco de segurança de manter as rotas de documentação interativa (/docs e /redoc) abertas e públicas em ambiente de produção sensível?
+A. Aumenta drasticamente o consumo de energia da placa de vídeo do usuário.
+B. Facilita o reconhecimento de superfície e enumeração de rotas/parâmetros por atacantes mal-intencionados.
+C. Apaga os dados gravados no banco de dados automaticamente após 24 horas.
+D. Nenhuma ferramenta externa consegue ler contratos em formato JSON.
+ANSWER: B
+
+Qual é o benefício do uso de ferramentas como openapi-typescript no ecossistema de desenvolvimento frontend?
+A. Converte automaticamente aplicações web em aplicativos nativos para smart TVs.
+B. Gera definições de tipos TypeScript a partir do /openapi.json, garantindo que mudanças no backend causem erro de compilação imediato no frontend.
+C. Elimina a necessidade de utilizar JavaScript ou navegadores web.
+D. Substitui o uso de CSS e design responsivo.
+ANSWER: B
+
+Qual é o papel da ferramenta Spectral no pipeline de integração contínua (CI/CD) de uma API governada por OpenAPI?
+A. Atuar como linter de contratos de API, auditando automaticamente se os endpoints seguem as convenções de estilo e padrões de qualidade definidos.
+B. Realizar deploy imediato para os servidores de produção sem executar testes.
+C. Gerar certificados SSL autoassinados inválidos.
+D. Compactar imagens em formato PNG e JPEG.
+ANSWER: A
