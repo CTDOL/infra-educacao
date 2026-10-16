@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "shortname": "devops-ci-cd-pipelines",
+  "idnumber": "CTDOL-DEV-002",
+  "fullname": "DevOps & CI/CD Pipelines com GitHub Actions, GHCR e Traefik",
+  "category": "CTDOL Dev / Formação Técnica",
+  "summary": "<p>Formação corporativa avançada em automação de entrega contínua, Reusable Workflows no GitHub Actions, Golden Images, runners self-hosted pull-based, edge routing dinâmico com Traefik e automated rollback orientado à saúde (Health-Gated Release).</p><p>Curso de matrícula fechada institucional (CTDOL Dev).</p>",
+  "format": "topics",
+  "visible": 1,
+  "shortlink": true,
+  "sections": [
+    {
+      "name": "Módulo 1 — Filosofia DevOps e Repositório Canônico (N0/N1)",
+      "lessons": [
+        {
+          "title": "Aula 01: Filosofia DevOps, 12-Factor App e o Modelo Pull-Based (N0)",
+          "file": "lessons/01-filosofia-devops-12factor.md"
+        },
+        {
+          "title": "Aula 02: O Contrato Universal dos 6 Arquivos e Golden Images (N1)",
+          "file": "lessons/02-contrato-6-arquivos-golden-images.md"
+        }
+      ]
+    },
+    {
+      "name": "Módulo 2 — Roteamento de Borda e Runners Locais (N2)",
+      "lessons": [
+        {
+          "title": "Aula 03: Edge Routing com Traefik e Runners Self-Hosted (N2)",
+          "file": "lessons/03-edge-routing-traefik-runners.md"
+        }
+      ]
+    },
+    {
+      "name": "Módulo 3 — Pipelines Avançados e Resiliência (N3)",
+      "lessons": [
+        {
+          "title": "Aula 04: Reusable Workflows, Promoção por Referência e Rollback Automático (N3)",
+          "file": "lessons/04-reusable-workflows-rollback.md"
+        }
+      ]
+    },
+    {
+      "name": "Avaliação de Certificação",
+      "quizzes": [
+        {
+          "name": "Avaliação Final: DevOps, CI/CD Pipelines e Governança de Releases",
+          "file": "quiz/quiz.txt",
+          "grade": 10,
+          "attempts": 3
+        }
+      ]
+    }
+  ],
+  "image": "cover.jpg",
+  "enrolment": {
+    "type": "manual"
+  }
+}

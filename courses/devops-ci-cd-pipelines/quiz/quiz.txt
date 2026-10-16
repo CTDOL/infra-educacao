@@ -1,0 +1,69 @@
+Qual e a definicao do principio Build Once, Deploy Many (Factor V do 12-Factor App) adotado na esteira corporativa de CI/CD?
+A. Compilar o codigo-fonte separadamente para cada ambiente de execucao (dev, hml e prd) a fim de otimizar os binarios para o hardware de cada servidor.
+B. Construir e testar a imagem do conteiner uma unica vez gerando uma tag imutavel atrelada ao commit Git (sha-<sha7>), promovendo exatamente esse mesmo artefato por referencia entre dev, hml e prd sem qualquer recompilacao.
+C. Armazenar todos os arquivos fontes em um repositorio central e realizar o git pull diretamente em producao na hora do deploy.
+D. Reconstruir a imagem Docker semanalmente em homologacao para garantir a atualizacao automatica de todas as bibliotecas.
+ANSWER: B
+
+Por que o modelo de execucao Pull-Based com Runners Self-Hosted e superior ao modelo de Push tradicional via SSH para deploy em servidores internos?
+A. Porque o SSH limita a transferencia de arquivos a no maximo 10 MB por segundo, enquanto o runner nao tem limite de velocidade.
+B. Porque no modelo Pull-Based o runner local realiza consultas ativas na nuvem via HTTPS de saida (porta 443), eliminando a necessidade de expor portas de entrada (como a porta 22 do SSH) e de armazenar credenciais ou chaves privadas do servidor na nuvem.
+C. Porque o SSH nao oferece suporte a sistemas operacionais baseados em Linux como AlmaLinux ou Ubuntu.
+D. Porque o modelo Pull-Based permite que qualquer usuario anonimo da internet envie comandos para dentro do servidor.
+ANSWER: B
+
+De acordo com o Factor III (Config) do 12-Factor App, como devem ser tratadas as variaveis de ambiente e segredos (como URLs de banco e chaves de API)?
+A. Devem ser escritas no Dockerfile atraves da instrucao ENV para que fiquem salvas diretamente nas camadas da imagem.
+B. Devem ser commitadas no arquivo docker-compose.yml de cada aplicacao para facilitar o versionamento no Git.
+C. Devem ser mantidas estritamente fora da base de codigo e da imagem Docker, sendo injetadas em tempo de execucao via GitHub Environments (arquivos de ambiente ou segredos gerenciados).
+D. Devem ser criptografadas e gravadas no proprio bundle compilado do JavaScript para acesso global.
+ANSWER: C
+
+Qual e a funcao dos quatro alvos obrigatorios (install, build, lint e test) presentes no Makefile de cada repositorio de aplicacao?
+A. Substituir o compilador do sistema operacional por um interpretador proprio do GitHub.
+B. Fornecer uma interface universal e previsivel para a esteira reutilizavel de CI, de modo que o workflow central execute os mesmos comandos sem precisar conhecer a linguagem ou framework do projeto.
+C. Gerar automaticamente a documentacao de OpenAPI em formato Swagger para os endpoints HTTP.
+D. Impedir que desenvolvedores locais executem comandos de teste em suas maquinas de trabalho.
+ANSWER: B
+
+Em aplicacoes frontend estaticas do tipo SPA (Vite/React), qual e a funcao do arquivo docker/env-config.template.js acoplado ao hook 40-env-config.sh da imagem spa-nginx-base?
+A. Executar o npm run build toda vez que um novo usuario acessa o portal no navegador.
+B. Injetar variaveis de ambiente em tempo de execucao atraves do utilitario envsubst, gerando o arquivo env-config.js e disponibilizando-as em window.__ENV__, permitindo que a mesma imagem estatica rode em dev, hml e prd sem rebuild.
+C. Compilar o codigo TypeScript em tempo real dentro do servidor Nginx.
+D. Armazenar as senhas dos usuarios autenticados no LocalStorage do navegador.
+ANSWER: B
+
+Em relacao a exposicao de portas de rede em ambiente corporativo conteinerizado, por que e considerado uma boa pratica nao declarar a diretiva ports: no servico principal e adotar o Traefik como Edge Router?
+A. Porque o Docker limita o numero de portas abertas a no maximo duas por computador.
+B. Porque conteineres que expõem portas nao conseguem se comunicar atraves de nomes de dominio DNS.
+C. Porque evita conflitos de portas locais entre diferentes projetos no mesmo host e garante que todo o trafego externo passe obrigatoriamente pelas regras seguras de roteamento, TLS e headers do Traefik via rede proxy-net.
+D. Porque o Traefik so consegue ler pacotes transmitidos em conexoes sem criptografia HTTP pura.
+ANSWER: C
+
+Como o Traefik realiza o Service Discovery (Descoberta Dinamica de Servicos) ao subir um novo conteiner no host?
+A. O Traefik varre periodicamente todas as faixas de IP da rede local executando testes de ping ICMP.
+B. O desenvolvedor precisa editar manualmente o arquivo /etc/traefik/traefik.yml e reiniciar o servico via systemctl apos cada deploy.
+C. O Traefik monitora o socket Unix do Docker (/var/run/docker.sock) em modo somente leitura, detectando novos conteineres e aplicando automaticamente as regras de roteamento declaradas em suas labels.
+D. O GitHub Actions envia uma requisicao de webhook diretamente para a porta administrativa do Traefik.
+ANSWER: C
+
+Qual e o objetivo da utilizacao do utilitario crane (especificamente o comando crane tag) na fase de Release de uma aplicacao?
+A. Descarregar a imagem para o disco local, recompilar com a flag --release e fazer um novo push para o registry.
+B. Criar uma nova tag semantica (ex: v1.0.0) apontando diretamente para o digest imutavel (sha-<sha7>) da imagem existente no registry remoto, promovendo a versao em segundos sem necessidade de rebuild.
+C. Deletar todas as tags antigas do repositorio para liberar espaco de armazenamento em disco.
+D. Validar as credenciais de usuario do sistema operacional antes de permitir o inicio do deploy.
+ANSWER: B
+
+Como funciona o mecanismo de Automated Rollback com Health-Gated Release executado no workflow de deploy (app-deploy.yml)?
+A. O pipeline pergunta ao operador no terminal se a aplicacao esta saudável; caso nao haja resposta em 5 minutos, o servidor e reiniciado.
+B. O deploy executa docker compose up -d --wait; se o healthcheck do conteiner falhar ou estourar o timeout, a esteira automaticamente restaura os arquivos de configuracao anteriores (.prev) e reativa a versao estavel precedente.
+C. O runner desliga o firewall do servidor e reverte todos os commits da branch main via git reset --hard.
+D. O Docker Compose envia um e-mail de alerta para o suporte tecnico e mantem o container quebrado ativo na porta de producao.
+ANSWER: B
+
+Por que a regra de concorrencia cancel-in-progress: false e obrigatoria nos workflows centrais de deploy em producao?
+A. Para impedir que dois desenvolvedores acessem o portal web do GitHub ao mesmo tempo.
+B. Porque se um deploy for cancelado abruptamente no meio de sua execucao, o servidor pode ficar em um estado inconsistente, como migrações parciais de banco de dados ou conteineres orfaos.
+C. Para forcar a fila de deploys a processar apenas um commit a cada 24 horas.
+D. Porque o GitHub cobra taxas adicionais caso uma acao em execucao seja interrompida pelo usuario.
+ANSWER: B
