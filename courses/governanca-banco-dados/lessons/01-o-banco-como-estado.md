@@ -16,6 +16,16 @@ Imagine um sistema com tabelas de clientes e pedidos. A equipe adiciona uma colu
 ## Por que isso importa para a governança
 A governança é a régua que decide quando uma mudança pode seguir. Ela responde a três perguntas: esta mudança é rastreável? Ela pode ser repetida sem dano? E, se der errado, até onde é possível voltar? As próximas aulas tratam cada uma dessas perguntas.
 
+## Aprofundamento: por que a mudança precisa de passos
+
+Muitos sistemas precisam funcionar o tempo todo, sem parada para manutenção. O texto de Wellhausen parte desse cenário: a mudança de dados persistentes pode levar muito tempo, porque depende do volume a migrar. A fonte afirma: "The larger the data set is, the longer migrations run." (tradução livre: quanto maior o conjunto de dados, mais longa é a migração.)
+
+Esse é o motivo de a mudança precisar ser dividida. Uma migração longa, feita de uma vez, mantém o sistema exposto a erros durante todo o tempo de execução. Dividida em passos, cada um pode ser implantado e verificado antes do seguinte.
+
+Para quem trabalha com o banco, a primeira regra é esta: antes de qualquer alteração, descubra qual é o volume de dados afetado e quanto tempo a operação deve levar. Essa estimativa define se a mudança cabe numa janela curta ou se precisa ser feita em lotes.
+
+**Fontes desta seção:** Tim Wellhausen, *Expand and Contract* (https://www.tim-wellhausen.de/papers/ExpandAndContract/ExpandAndContract.html).
+
 ## Glossário
 - **Esquema:** a estrutura do banco, com tabelas, colunas, chaves e restrições.
 - **Migração:** uma alteração do esquema ou dos dados, com identificador e ordem.

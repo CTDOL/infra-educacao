@@ -24,6 +24,22 @@ Um registro que pode ser editado por quem ele audita perde o valor de prova.
 ## Em produção
 A correção de um erro em produção normalmente é uma nova migração para frente, e não uma reversão. Reverter por migração em produção só com ordem explícita e backup verificado.
 
+## Aprofundamento: o que a OWASP recomenda
+
+**Privilégio mínimo.** A folha de segurança de banco da OWASP recomenda o princípio do menor privilégio na atribuição de permissões às contas: elas devem ter apenas as permissões mínimas necessárias para a aplicação funcionar. Para a maioria das aplicações, a fonte observa que bastam as permissões de leitura, alteração e remoção de dados: "Most applications would only need SELECT , UPDATE and DELETE permissions." (tradução livre: a maioria das aplicações precisaria apenas de permissões de SELECT, UPDATE e DELETE.)
+
+Duas recomendações diretas da mesma fonte:
+- "The account should not be the owner of the database as this can lead to privilege escalation vulnerabilities." (tradução livre: a conta da aplicação não deve ser a dona do banco, porque isso pode levar a escalada de privilégio.)
+- "Avoid using database links or linked servers." (tradução livre: evite usar links de banco ou servidores vinculados.)
+
+**Auditoria.** A folha de logging da OWASP trata o registro de eventos. Entre os eventos que devem ser registrados, a fonte lista mudanças de configuração e a inicialização e parada de sistemas. Sobre a proteção do registro, o texto afirma: "The logging mechanisms and collected event data must be protected from mis-use such as tampering in transit, and unauthorized access, modification and deletion once stored." (tradução livre: os mecanismos de registro e os dados de eventos precisam ser protegidos contra uso indevido, como adulteração em trânsito e acesso, modificação ou exclusão não autorizados depois de armazenados.)
+
+A fonte também recomenda, para o armazenamento, detectar alteração e copiar o registro para mídia somente leitura o quanto antes. E sobre quem lê o registro: "All access to the logs must be recorded and monitored" e "The privileges to read log data should be restricted and reviewed." (tradução livre: todo acesso aos registros deve ser registrado e monitorado; os privilégios de leitura dos registros devem ser restritos e revisados.)
+
+**Reversão.** O paper de Wellhausen traz o alerta que dá sentido à Aula 04: a reversão de uma etapa de contração "cannot be easily done anymore other by restoring data from a backup" (tradução livre: não pode mais ser feita facilmente, a não ser restaurando dados de um backup). Por isso, antes de contrair, o backup precisa estar verificado.
+
+**Fontes desta seção:** OWASP, *Database Security Cheat Sheet* (https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html), OWASP, *Logging Cheat Sheet* (https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html) e Tim Wellhausen, *Expand and Contract* (https://www.tim-wellhausen.de/papers/ExpandAndContract/ExpandAndContract.html).
+
 ## Glossário
 - **Privilégio mínimo:** princípio de dar a cada conta só as permissões necessárias.
 - **Papel:** identidade de acesso no banco, com permissões próprias.
