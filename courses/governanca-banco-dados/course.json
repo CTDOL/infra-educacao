@@ -16,20 +16,36 @@
     {
       "name": "Módulo 1 — Fundamentos",
       "lessons": [
-        { "title": "Aula 01: O banco como estado e a governança da mudança", "file": "lessons/01-o-banco-como-estado.md" }
+        {
+          "title": "Aula 01: O banco como estado e a governança da mudança",
+          "file": "lessons/01-o-banco-como-estado.md"
+        }
       ]
     },
     {
       "name": "Módulo 2 — Mudança sem interrupção",
       "lessons": [
-        { "title": "Aula 02: Mudança em fases (expandir, migrar, contrair)", "file": "lessons/02-mudanca-em-fases.md" },
-        { "title": "Aula 03: Migrações versionadas e reexecutáveis", "file": "lessons/03-migracoes-versionadas-e-reexecutaveis.md" }
+        {
+          "title": "Aula 02: Mudança em fases (expandir, migrar, contrair)",
+          "file": "lessons/02-mudanca-em-fases.md"
+        },
+        {
+          "title": "Aula 03: Migrações versionadas e reexecutáveis",
+          "file": "lessons/03-migracoes-versionadas-e-reexecutaveis.md"
+        }
       ]
     },
     {
       "name": "Módulo 3 — Controle, auditoria e reversão",
       "lessons": [
-        { "title": "Aula 04: Privilégio mínimo, auditoria e reversão", "file": "lessons/04-privilegio-auditoria-e-reversao.md" }
+        {
+          "title": "Aula 04: Privilégio mínimo, auditoria e reversão",
+          "file": "lessons/04-privilegio-auditoria-e-reversao.md"
+        },
+        {
+          "title": "Laboratório: aplicando o gate de governança de banco",
+          "file": "lessons/05-laboratorio-gate-de-governanca.md"
+        }
       ]
     },
     {
