@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "shortname": "governanca-banco-dados",
+  "idnumber": "CTDOL-DEV-005",
+  "fullname": "Governança de Banco de Dados: Mudança Segura, Reexecução e Reversão",
+  "category": "CTDOL Dev / Formação Técnica",
+  "summary": "Como mudar o esquema e os dados de um banco sem interromper sistemas em produção: migrações versionadas e reexecutáveis, mudança em fases, privilégio mínimo, auditoria e reversão. Agnóstico de tecnologia.",
+  "image": "cover.jpg",
+  "enrolment": {
+    "type": "manual"
+  },
+  "format": "topics",
+  "visible": 1,
+  "shortlink": true,
+  "sections": [
+    {
+      "name": "Módulo 1 — Fundamentos",
+      "lessons": [
+        { "title": "Aula 01: O banco como estado e a governança da mudança", "file": "lessons/01-o-banco-como-estado.md" }
+      ]
+    },
+    {
+      "name": "Módulo 2 — Mudança sem interrupção",
+      "lessons": [
+        { "title": "Aula 02: Mudança em fases (expandir, migrar, contrair)", "file": "lessons/02-mudanca-em-fases.md" },
+        { "title": "Aula 03: Migrações versionadas e reexecutáveis", "file": "lessons/03-migracoes-versionadas-e-reexecutaveis.md" }
+      ]
+    },
+    {
+      "name": "Módulo 3 — Controle, auditoria e reversão",
+      "lessons": [
+        { "title": "Aula 04: Privilégio mínimo, auditoria e reversão", "file": "lessons/04-privilegio-auditoria-e-reversao.md" }
+      ]
+    },
+    {
+      "name": "Avaliação de Certificação",
+      "quizzes": [
+        {
+          "name": "Avaliação: Governança de Banco de Dados",
+          "file": "quiz/governanca_banco_dados_moodle_aiken.txt",
+          "grade": 10,
+          "attempts": 3
+        }
+      ]
+    }
+  ]
+}

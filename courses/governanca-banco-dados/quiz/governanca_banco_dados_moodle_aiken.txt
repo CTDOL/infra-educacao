@@ -1,0 +1,69 @@
+Por que o banco não pode ser reimplantado a partir de um commit, como o código?
+A. Porque ele guarda dados, e cada mudança se acumula sobre a anterior
+B. Porque o banco não aceita arquivos de texto
+C. Porque o código não precisa de versão
+D. Porque o banco só roda em produção
+ANSWER: A
+
+O que a fase de expansão faz no padrão Parallel Change?
+A. Remove a estrutura antiga
+B. Cria a estrutura nova sem remover a antiga
+C. Migra os consumidores para a estrutura nova
+D. Faz backup do banco
+ANSWER: B
+
+Em qual fase a estrutura antiga é removida?
+A. Expandir
+B. Migrar
+C. Contrair
+D. Reexecutar
+ANSWER: C
+
+Uma migração já aplicada em produção deve ser
+A. Editada para corrigir erros
+B. Apagada do repositório
+C. Mantida, e a correção feita por uma nova migração
+D. Reaplicada com os dados removidos
+ANSWER: C
+
+Uma operação é idempotente quando
+A. Roda sempre em menos de um segundo
+B. Só pode ser executada uma vez
+C. Produz o mesmo estado final, executada uma ou várias vezes
+D. Não altera nenhum dado
+ANSWER: C
+
+Qual é a função de uma guarda de existência em uma migração?
+A. Apagar o objeto antes de criá-lo
+B. Verificar se o objeto já existe, para não falhar numa reexecução
+C. Registrar o autor da mudança
+D. Criptografar a tabela
+ANSWER: B
+
+Por que a guarda precisa funcionar sem depender de rollback, em alguns motores?
+A. Porque o rollback nunca existe
+B. Porque algumas instruções de mudança de esquema são confirmadas sozinhas, e o banco pode ficar pela metade
+C. Porque a guarda deixa o banco mais lento
+D. Porque a migração não tem identificador
+ANSWER: B
+
+Qual é o princípio do privilégio mínimo aplicado a bancos?
+A. A aplicação deve ter todas as permissões do banco
+B. A aplicação deve ter só as permissões necessárias ao seu funcionamento
+C. O administrador deve compartilhar uma única conta
+D. Nenhuma conta deve ter senha
+ANSWER: B
+
+Ao reverter a fase de contração, qual é o caminho mais comum?
+A. Executar downgrade sem backup
+B. Restaurar dados de um backup, com possível perda
+C. Apagar a tabela de auditoria
+D. Desligar o banco
+ANSWER: B
+
+Por que a aplicação deve registrar cada mudança de esquema de forma protegida?
+A. Para permitir que qualquer pessoa altere o registro
+B. Para que o registro sirva como prova e possa ser auditado
+C. Para aumentar o tamanho do banco
+D. Porque o motor exige isso
+ANSWER: B
